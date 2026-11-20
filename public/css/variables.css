@@ -1,0 +1,191 @@
+/**
+ * MEMORA — Design System Tokens & Dynamic Mood Variables
+ * Inspired by Kinfolk editorial publications & Dieter Rams functional minimalism
+ */
+
+@layer reset, base, theme, components, utilities;
+
+@layer theme {
+  :root {
+    /* ==========================================================================
+       1. Base Editorial Palette (Analog Paper & Ink)
+       ========================================================================== */
+    --color-paper-50: #FDFCF9;
+    --color-paper-100: #F7F5F0;    /* Primary warm canvas */
+    --color-paper-200: #EFECE6;    /* Stone surface */
+    --color-paper-300: #E5E1D8;    /* Elevated stone surface */
+    --color-paper-400: #D8D2C6;    /* Divider / subtle container */
+
+    --color-ink-900: #1C1B19;      /* Deep charcoal ink */
+    --color-ink-700: #3E3B36;      /* Charcoal muted */
+    --color-ink-500: #6E6A63;      /* Muted taupe secondary text */
+    --color-ink-400: #9E988F;      /* Whisper taupe meta/captions */
+    --color-ink-300: #C2BCB3;      /* Placeholder text */
+
+    /* Pure white for crisp contrast sheets & Polaroid borders */
+    --color-white: #FFFFFF;
+    
+    /* Hairline borders */
+    --border-color-hairline: rgba(28, 27, 25, 0.08);
+    --border-color-subtle: rgba(28, 27, 25, 0.14);
+    --border-color-strong: rgba(28, 27, 25, 0.28);
+
+    /* ==========================================================================
+       2. Typography & Fonts
+       ========================================================================== */
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-serif-accent: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', Monaco, 'Cascadia Mono', Consolas, monospace;
+
+    /* Fluid Typographic Scale */
+    --text-display: clamp(2.4rem, 4.8vw, 3.8rem);
+    --text-hero: clamp(2rem, 3.6vw, 3rem);
+    --text-h1: clamp(1.6rem, 2.6vw, 2.2rem);
+    --text-h2: clamp(1.25rem, 1.9vw, 1.65rem);
+    --text-h3: clamp(1.05rem, 1.4vw, 1.3rem);
+    --text-body-lg: clamp(1rem, 1.15vw, 1.15rem);
+    --text-body: 0.9375rem;
+    --text-sm: 0.8125rem;
+    --text-xs: 0.72rem;
+    --text-caption: 0.65rem;
+
+    --leading-tight: 1.18;
+    --leading-snug: 1.32;
+    --leading-editorial: 1.68;
+    --leading-loose: 1.85;
+
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0em;
+    --tracking-wide: 0.04em;
+    --tracking-widest: 0.12em;
+
+    /* ==========================================================================
+       3. Spacing & Layout
+       ========================================================================== */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+
+    --container-max-width: 1240px;
+    --container-padding: clamp(1.25rem, 3.5vw, 3rem);
+
+    /* Radii */
+    --radius-xs: 3px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Diffused Analog Shadows (Rams & Kinfolk Natural Light) */
+    --shadow-subtle: 0 1px 3px rgba(28, 27, 25, 0.04), 0 1px 2px rgba(28, 27, 25, 0.02);
+    --shadow-card: 0 6px 20px -3px rgba(28, 27, 25, 0.05), 0 2px 6px -1px rgba(28, 27, 25, 0.03);
+    --shadow-lifted: 0 14px 34px -4px rgba(28, 27, 25, 0.08), 0 4px 12px -2px rgba(28, 27, 25, 0.04);
+    --shadow-polaroid: 0 12px 36px -6px rgba(28, 27, 25, 0.13), 0 1px 3px rgba(28, 27, 25, 0.08);
+
+    /* Transitions */
+    --transition-fast: 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-normal: 280ms cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-smooth: 420ms cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-tactile: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* ==========================================================================
+       4. Default / Neutral Mood Tokens
+       ========================================================================== */
+    --mood-theme-name: "default";
+    --mood-canvas-bg: var(--color-paper-100);
+    --mood-surface: var(--color-white);
+    --mood-surface-secondary: var(--color-paper-200);
+    --mood-ink: var(--color-ink-900);
+    --mood-secondary: var(--color-ink-500);
+    --mood-accent: #7D7063;
+    --mood-accent-hover: #65594D;
+    --mood-accent-soft: rgba(125, 112, 99, 0.12);
+    --mood-border: var(--border-color-hairline);
+    --mood-border-hover: rgba(125, 112, 99, 0.28);
+    --mood-tag-bg: rgba(28, 27, 25, 0.05);
+    --mood-tag-color: var(--color-ink-700);
+    --mood-photo-filter: contrast(1.02) saturate(1.02);
+    --mood-glow: 0 8px 30px rgba(125, 112, 99, 0.08);
+    --mood-polaroid-tilt: 0deg;
+  }
+
+  /* ==========================================================================
+     5. Dynamic Mood 1: Happy-Sunny (Warm apricot / golden hour)
+     ========================================================================== */
+  :where([data-mood="happy-sunny"]),
+  body[data-mood="happy-sunny"] {
+    --mood-theme-name: "happy-sunny";
+    --mood-canvas-bg: #FFF7EB;
+    --mood-surface: #FFFDF9;
+    --mood-surface-secondary: #FAEEE0;
+    --mood-ink: #2C1808;
+    --mood-secondary: #7A5B43;
+    --mood-accent: #E87A3E;
+    --mood-accent-hover: #D4662B;
+    --mood-accent-soft: rgba(232, 122, 62, 0.14);
+    --mood-border: rgba(232, 122, 62, 0.18);
+    --mood-border-hover: rgba(232, 122, 62, 0.38);
+    --mood-tag-bg: rgba(232, 122, 62, 0.1);
+    --mood-tag-color: #B5501B;
+    --mood-photo-filter: contrast(1.04) saturate(1.18) sepia(0.08) brightness(1.03);
+    --mood-glow: 0 10px 36px rgba(232, 122, 62, 0.16);
+    --mood-polaroid-tilt: 0.8deg;
+  }
+
+  /* ==========================================================================
+     6. Dynamic Mood 2: Calm-Peaceful (Muted sage / mist tones)
+     ========================================================================== */
+  :where([data-mood="calm-peaceful"]),
+  body[data-mood="calm-peaceful"] {
+    --mood-theme-name: "calm-peaceful";
+    --mood-canvas-bg: #F0F4F2;
+    --mood-surface: #F9FBFA;
+    --mood-surface-secondary: #E3ECE8;
+    --mood-ink: #142420;
+    --mood-secondary: #486860;
+    --mood-accent: #4A7C6F;
+    --mood-accent-hover: #376358;
+    --mood-accent-soft: rgba(74, 124, 111, 0.14);
+    --mood-border: rgba(74, 124, 111, 0.18);
+    --mood-border-hover: rgba(74, 124, 111, 0.38);
+    --mood-tag-bg: rgba(74, 124, 111, 0.1);
+    --mood-tag-color: #2D584D;
+    --mood-photo-filter: saturate(0.96) contrast(1.01) brightness(1.02);
+    --mood-glow: 0 10px 34px rgba(74, 124, 111, 0.12);
+    --mood-polaroid-tilt: -0.5deg;
+  }
+
+  /* ==========================================================================
+     7. Dynamic Mood 3: Nostalgic-Emotional (Vintage sepia / dusty rose)
+     ========================================================================== */
+  :where([data-mood="nostalgic-emotional"]),
+  body[data-mood="nostalgic-emotional"] {
+    --mood-theme-name: "nostalgic-emotional";
+    --mood-canvas-bg: #F3ECE8;
+    --mood-surface: #FAF6F4;
+    --mood-surface-secondary: #E7DDD7;
+    --mood-ink: #261617;
+    --mood-secondary: #745152;
+    --mood-accent: #8C5A5A;
+    --mood-accent-hover: #754444;
+    --mood-accent-soft: rgba(140, 90, 90, 0.14);
+    --mood-border: rgba(140, 90, 90, 0.18);
+    --mood-border-hover: rgba(140, 90, 90, 0.38);
+    --mood-tag-bg: rgba(140, 90, 90, 0.1);
+    --mood-tag-color: #723C3C;
+    --mood-photo-filter: sepia(0.24) contrast(0.98) brightness(0.98) saturate(0.92);
+    --mood-glow: 0 10px 36px rgba(140, 90, 90, 0.14);
+    --mood-polaroid-tilt: -1.6deg;
+  }
+}

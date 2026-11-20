@@ -1,0 +1,168 @@
+/**
+ * MEMORA — Base Styles, Editorial Typography, Resets & Film Grain
+ */
+
+@layer reset {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img, picture, svg, video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  button, input, select, textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ul, ol {
+    list-style: none;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--mood-canvas-bg, var(--color-paper-100));
+    color: var(--mood-ink, var(--color-ink-900));
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--leading-editorial);
+    letter-spacing: var(--tracking-normal);
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color var(--transition-smooth), color var(--transition-normal);
+  }
+
+  /* Browser UI Theming */
+  accent-color: var(--mood-accent, #7D7063);
+  scrollbar-color: var(--color-ink-300) transparent;
+
+  ::selection {
+    background-color: var(--mood-accent-soft, rgba(125, 112, 99, 0.16));
+    color: var(--mood-ink, var(--color-ink-900));
+  }
+
+  /* Tactile Analog Paper & Film Grain Overlay */
+  .film-grain {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.045;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+  }
+
+  /* Accessible Focus Rings */
+  :focus-visible {
+    outline: 2px solid var(--mood-accent, var(--color-ink-900));
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Editorial Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    color: var(--mood-ink, var(--color-ink-900));
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  .font-serif-accent {
+    font-family: var(--font-serif-accent);
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .font-italic {
+    font-style: italic;
+  }
+
+  p {
+    color: var(--mood-secondary, var(--color-ink-700));
+    margin-block-end: var(--space-3);
+  }
+
+  p:last-child {
+    margin-block-end: 0;
+  }
+
+  /* Editorial Pull Quotes */
+  blockquote, .pull-quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-h3);
+    line-height: var(--leading-snug);
+    color: var(--mood-ink, var(--color-ink-900));
+    position: relative;
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--mood-accent, var(--color-ink-300));
+    margin-block: var(--space-4);
+  }
+
+  /* Layout Containers */
+  .container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  .editorial-rule {
+    height: 1px;
+    background: var(--border-color-hairline);
+    border: none;
+    margin-block: var(--space-10);
+  }
+
+  /* Screen Reader Utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
