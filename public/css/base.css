@@ -45,7 +45,14 @@
 }
 
 @layer base {
+  html {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
   body {
+    max-width: 100vw;
+    overflow-x: hidden;
     background-color: var(--mood-canvas-bg, var(--color-paper-100));
     color: var(--mood-ink, var(--color-ink-900));
     font-family: var(--font-sans);
@@ -53,7 +60,6 @@
     line-height: var(--leading-editorial);
     letter-spacing: var(--tracking-normal);
     position: relative;
-    overflow-x: hidden;
     transition: background-color var(--transition-smooth), color var(--transition-normal);
   }
 
