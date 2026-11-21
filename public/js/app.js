@@ -435,7 +435,8 @@ class App {
           }
 
           ui.showTheatricalAIScreen(store.getState().wizardDraft, (newMemory) => {
-            store.setView('memory-view', newMemory.id);
+            // New memory has already updated store with activeView: 'memory-view'
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           });
           break;
         }

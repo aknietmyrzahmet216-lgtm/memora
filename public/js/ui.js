@@ -20,6 +20,7 @@ export class UIEngine {
   /**
    * Safely transitions view updates using the View Transitions API if supported
    * Includes mandatory accessibility routing: shifting focus programmatically
+   * Gracefully handles concurrent/interrupted transitions without unhandled promise rejections
    */
   transition(callback, focusTargetSelector = 'h1') {
     if (!document.startViewTransition) {
@@ -27,7 +28,22 @@ export class UIEngine {
       const target = document.querySelector(focusTargetSelector);
       if (target) {
         target.setAttribute('tabindex', '-1');
-        target.focus();
+        target.focus({ preventScroll: true });
+      }
+      return;
+    }
+
+    // If a View Transition is already animating, perform DOM update directly to prevent collisions
+    if (this._activeTransition) {
+      try {
+        callback();
+        const target = document.querySelector(focusTargetSelector);
+        if (target) {
+          target.setAttribute('tabindex', '-1');
+          target.focus({ preventScroll: true });
+        }
+      } catch (e) {
+        // Ignored
       }
       return;
     }
@@ -37,18 +53,34 @@ export class UIEngine {
         callback();
       });
 
+      this._activeTransition = vt;
+
+      // Handle all rejection states to prevent unhandled AbortError in browser console
+      if (vt.ready) {
+        vt.ready.catch(() => {});
+      }
+      if (vt.updateCallbackDone) {
+        vt.updateCallbackDone.catch(() => {});
+      }
+
       vt.finished
         .then(() => {
           const target = document.querySelector(focusTargetSelector);
           if (target) {
             target.setAttribute('tabindex', '-1');
-            target.focus();
+            target.focus({ preventScroll: true });
           }
         })
         .catch(() => {
-          // Gracefully swallow AbortError if transition was interrupted by rapid navigation
+          // Gracefully swallow AbortError if transition was skipped by rapid navigation
+        })
+        .finally(() => {
+          if (this._activeTransition === vt) {
+            this._activeTransition = null;
+          }
         });
     } catch (err) {
+      this._activeTransition = null;
       callback();
     }
   }
