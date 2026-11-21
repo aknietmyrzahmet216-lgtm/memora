@@ -147,4 +147,69 @@
       display: none !important;
     }
   }
+
+  /* ==========================================================================
+     6. Ambient Cherry Blossom Drifting Petals Animation
+     ========================================================================== */
+  @keyframes petalFall {
+    0% {
+      transform: translateY(-40px) translateX(0) rotate(0deg) scale(0.8);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.85;
+    }
+    85% {
+      opacity: 0.75;
+    }
+    100% {
+      transform: translateY(105vh) translateX(120px) rotate(720deg) scale(1.1);
+      opacity: 0;
+    }
+  }
+
+  @keyframes petalSway {
+    0%, 100% {
+      margin-left: -18px;
+    }
+    50% {
+      margin-left: 28px;
+    }
+  }
+
+  .intro-drifting-petals {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .drifting-petal {
+    position: absolute;
+    top: -30px;
+    background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #FFCAD4 45%, #F4978E 100%);
+    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+    opacity: 0.7;
+    filter: drop-shadow(0 2px 6px rgba(189, 137, 131, 0.25));
+    animation: petalFall linear infinite, petalSway ease-in-out infinite;
+  }
+
+  /* Kinetic Brand Shimmer */
+  @keyframes shimmer-shine {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .shimmer-text {
+    background: linear-gradient(110deg, #3D2E2B 20%, #D48B80 45%, #FFF0EE 50%, #D48B80 55%, #3D2E2B 80%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer-shine 6s linear infinite;
+  }
 }

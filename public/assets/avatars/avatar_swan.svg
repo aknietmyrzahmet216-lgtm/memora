@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <defs>
+    <radialGradient id="swanBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F2F7F9" />
+      <stop offset="100%" stop-color="#DCE7EC" />
+    </radialGradient>
+    <linearGradient id="swanBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="80%" stop-color="#F4F8FA" />
+      <stop offset="100%" stop-color="#D5E1E8" />
+    </linearGradient>
+    <filter id="swanShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#89A2AE" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <rect width="80" height="80" rx="24" fill="url(#swanBg)"/>
+  <g transform="translate(40,42)" filter="url(#swanShadow)">
+    <!-- Water ripple -->
+    <ellipse cx="0" cy="18" rx="20" ry="3.5" fill="#C5D7DF" opacity="0.6"/>
+    <!-- Body -->
+    <path d="M-18 12 C-16 2 -4 -2 8 8 C12 12 18 14 20 12 C18 18 4 19 -18 12 Z" fill="url(#swanBody)"/>
+    <!-- Graceful curved neck & head -->
+    <path d="M6 10 C3 -4 -6 -12 -12 -16 C-15 -18 -18 -16 -18 -12 C-18 -6 -8 2 2 12 Z" fill="url(#swanBody)"/>
+    <!-- Head crown -->
+    <circle cx="-15" cy="-14" r="4.5" fill="#FFFFFF"/>
+    <!-- Gold beak -->
+    <polygon points="-19,-14 -24,-13 -19,-11" fill="#E8A87C"/>
+    <!-- Eye dot -->
+    <circle cx="-15" cy="-14.5" r="1" fill="#3D2E2B"/>
+  </g>
+</svg>

@@ -116,11 +116,39 @@ class App {
 
       switch (action) {
         // Intro & Onboarding actions (Screenshot 1)
+        case 'open-intro-modal': {
+          e.preventDefault();
+          const modalBackdrop = document.getElementById('intro-onboarding-modal-backdrop');
+          if (modalBackdrop) {
+            modalBackdrop.style.display = 'flex';
+            const nameInput = document.getElementById('intro-user-name');
+            if (nameInput) setTimeout(() => nameInput.focus(), 80);
+          }
+          break;
+        }
+
         case 'submit-intro': {
           e.preventDefault();
           const input = document.getElementById('intro-user-name');
           const name = input ? input.value.trim() : '';
-          store.setUserName(name || 'Alika');
+          const selectedAvatarBtn = document.querySelector('.figurine-select-btn.selected');
+          const avatarUrl = selectedAvatarBtn ? selectedAvatarBtn.getAttribute('data-url') : null;
+          store.setUserName(name || 'Alika', avatarUrl);
+          break;
+        }
+
+        case 'pick-intro-avatar': {
+          e.preventDefault();
+          const url = actionEl.getAttribute('data-url');
+          document.querySelectorAll('.figurine-select-btn').forEach(btn => btn.classList.remove('selected'));
+          actionEl.classList.add('selected');
+          break;
+        }
+
+        case 'select-profile-avatar': {
+          e.preventDefault();
+          const url = actionEl.getAttribute('data-url');
+          store.setUserAvatar(url);
           break;
         }
 
@@ -657,7 +685,9 @@ class App {
       if (e.key === 'Enter' && e.target && e.target.id === 'intro-user-name') {
         e.preventDefault();
         const name = e.target.value.trim();
-        store.setUserName(name || 'Alika');
+        const selectedAvatarBtn = document.querySelector('.figurine-select-btn.selected');
+        const avatarUrl = selectedAvatarBtn ? selectedAvatarBtn.getAttribute('data-url') : null;
+        store.setUserName(name || 'Alika', avatarUrl);
       }
       if (e.key === 'Enter' && e.target && e.target.id === 'edit-profile-name-input') {
         e.preventDefault();

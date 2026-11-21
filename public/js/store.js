@@ -10,6 +10,51 @@
 
 import { INITIAL_MEMORIES, INITIAL_TIME_CAPSULES } from './mockData.js';
 
+export const FIGURINE_AVATARS = [
+  {
+    id: 'blossom',
+    name: 'Porcelain Blossom',
+    url: 'assets/avatars/avatar_blossom.svg',
+    tag: '🌸 Rose Porcelain',
+    meaning: 'Gentle warmth & blooming memories'
+  },
+  {
+    id: 'swan',
+    name: 'Ceramic Swan',
+    url: 'assets/avatars/avatar_swan.svg',
+    tag: '🦢 Glazed Ceramic',
+    meaning: 'Grace, peace & tranquil moments'
+  },
+  {
+    id: 'sprout',
+    name: 'Crystal Sprout',
+    url: 'assets/avatars/avatar_sprout.svg',
+    tag: '🌱 Blown Glass',
+    meaning: 'Growth, fresh beginnings & renewal'
+  },
+  {
+    id: 'dove',
+    name: 'Alabaster Dove',
+    url: 'assets/avatars/avatar_dove.svg',
+    tag: '🕊️ Carved Alabaster',
+    meaning: 'Freedom, serenity & cherished nostalgia'
+  },
+  {
+    id: 'moon',
+    name: 'Celestial Moon',
+    url: 'assets/avatars/avatar_moon.svg',
+    tag: '🌙 Pearlescent Brass',
+    meaning: 'Nocturnal thoughts & golden dreams'
+  },
+  {
+    id: 'tea',
+    name: 'Zen Teacup',
+    url: 'assets/avatars/avatar_tea.svg',
+    tag: '🍵 Stoneware Glaze',
+    meaning: 'Mindful stillness & slow living'
+  }
+];
+
 const STORAGE_KEY = 'memora_chronicles_store_v3';
 
 class MemoryStore {
@@ -23,6 +68,11 @@ class MemoryStore {
       const persisted = localStorage.getItem(STORAGE_KEY);
       if (persisted) {
         const parsed = JSON.parse(persisted);
+        const rawAvatar = parsed.userProfile?.avatarUrl;
+        const avatarUrl = (rawAvatar && !rawAvatar.includes('unsplash.com'))
+          ? rawAvatar
+          : 'assets/avatars/avatar_blossom.svg';
+
         return {
           memories: Array.isArray(parsed.memories) && parsed.memories.length > 0 
             ? parsed.memories 
@@ -37,11 +87,11 @@ class MemoryStore {
           activeView: parsed.activeView || 'home',
           activeMemoryId: parsed.activeMemoryId || null,
           selectedMemoryId: parsed.selectedMemoryId || 'mem-day-1',
-          userProfile: parsed.userProfile || {
-            name: 'Alika',
-            avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-            hasCompletedIntro: false,
-            joinedDate: 'November 2026'
+          userProfile: {
+            name: parsed.userProfile?.name || 'Alika',
+            avatarUrl: avatarUrl,
+            hasCompletedIntro: parsed.userProfile?.hasCompletedIntro || false,
+            joinedDate: parsed.userProfile?.joinedDate || 'November 2026'
           },
           activeTab: parsed.activeTab || 'home',
           audioPlayingId: null,
@@ -72,7 +122,7 @@ class MemoryStore {
       selectedMemoryId: 'mem-day-1',
       userProfile: {
         name: 'Alika',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        avatarUrl: 'assets/avatars/avatar_blossom.svg',
         hasCompletedIntro: false,
         joinedDate: 'November 2026'
       },
@@ -222,13 +272,24 @@ class MemoryStore {
   }
 
   // Profile & Intro management
-  setUserName(name) {
+  setUserName(name, avatarUrl = null) {
     const cleanName = (name || '').trim() || 'Alika';
     this.setState({
       userProfile: {
         ...this._state.userProfile,
         name: cleanName,
+        avatarUrl: avatarUrl || this._state.userProfile.avatarUrl || 'assets/avatars/avatar_blossom.svg',
         hasCompletedIntro: true
+      }
+    }, 'PROFILE_UPDATED');
+  }
+
+  setUserAvatar(avatarUrl) {
+    if (!avatarUrl) return;
+    this.setState({
+      userProfile: {
+        ...this._state.userProfile,
+        avatarUrl
       }
     }, 'PROFILE_UPDATED');
   }
@@ -316,7 +377,7 @@ class MemoryStore {
       selectedMemoryId: 'mem-day-1',
       userProfile: {
         name: 'Alika',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        avatarUrl: 'assets/avatars/avatar_blossom.svg',
         hasCompletedIntro: false,
         joinedDate: 'November 2026'
       },
