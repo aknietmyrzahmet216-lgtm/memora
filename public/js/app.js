@@ -33,28 +33,37 @@ class App {
       // Sync store audio state without re-rendering the whole page
       store.setAudioState(currentPlayingId, isPlaying);
 
+      // 1. iTunes 30s preview buttons (both in search results and selected track banner)
       document.querySelectorAll('[data-action="preview-itunes-stream"]').forEach(btn => {
         const id = btn.getAttribute('data-song-id');
-        if (id === currentPlayingId && isPlaying) {
-          btn.innerHTML = '■ Stop';
+        const isThisPlaying = isPlaying && (id === currentPlayingId);
+        btn.classList.toggle('is-playing', isThisPlaying);
+        if (isThisPlaying) {
+          btn.innerHTML = '⏸ Pause';
           btn.classList.add('btn-primary');
           btn.classList.remove('btn-secondary');
         } else {
-          btn.innerHTML = '▶ 30s';
+          const isBanner = btn.closest('#selected-soundtrack-banner') || btn.closest('.selected-track-pill');
+          btn.innerHTML = isBanner ? '▶ Play Preview' : '▶ 30s';
           btn.classList.remove('btn-primary');
           btn.classList.add('btn-secondary');
         }
       });
+
+      // 2. Curated Ambient Synth preset preview buttons
       document.querySelectorAll('[data-action="preview-soundtrack"]').forEach(btn => {
         const id = btn.getAttribute('data-id');
-        if (id === currentPlayingId && isPlaying) {
-          btn.innerHTML = '■ Stop';
-        } else {
-          btn.innerHTML = '▶ Listen Preview';
+        const isThisPlaying = isPlaying && (id === currentPlayingId);
+        btn.classList.toggle('is-playing', isThisPlaying);
+        btn.innerHTML = isThisPlaying ? '⏸ Pause' : '▶ Listen Preview';
+
+        const card = btn.closest('.soundtrack-card');
+        if (card) {
+          card.classList.toggle('is-playing', isThisPlaying);
         }
       });
 
-      // Sync Dieter Rams Audio Player Widget on memory view in-place (ZERO flicker, ZERO innerHTML replacement)
+      // 3. Sync all card & widget play buttons across Archive, Home, and Modals
       this._syncAudioWidgetState();
     };
 
@@ -301,10 +310,10 @@ class App {
           
           if (trackId) {
             let isNowPlaying = false;
-            if (previewUrl && previewUrl !== 'undefined') {
+            if (previewUrl && previewUrl !== 'undefined' && previewUrl.trim() !== '') {
               isNowPlaying = audioEngine.toggleStream(previewUrl, trackId);
             } else {
-              isNowPlaying = audioEngine.toggle(presetId);
+              isNowPlaying = audioEngine.toggle(presetId, trackId);
             }
             store.setAudioState(trackId, isNowPlaying);
           }
@@ -702,14 +711,13 @@ class App {
     const isPlaying = state.isAudioPlaying;
     const currentId = state.audioPlayingId;
 
-    document.querySelectorAll('.audio-player-widget').forEach(widget => {
-      const btn = widget.querySelector('[data-action="toggle-audio"]');
-      if (!btn) return;
+    // 1. Sync ALL play buttons across Archive cards, Home hero, and Home recent memories
+    document.querySelectorAll('[data-action="toggle-audio"]').forEach(btn => {
       const trackId = btn.getAttribute('data-id');
       const isThisPlaying = isPlaying && (trackId === currentId);
 
-      widget.classList.toggle('is-playing', isThisPlaying);
-      btn.setAttribute('aria-label', isThisPlaying ? 'Pause soundtrack reflection' : 'Play soundtrack reflection');
+      btn.classList.toggle('is-playing', isThisPlaying);
+      btn.setAttribute('aria-label', isThisPlaying ? 'Pause soundtrack' : 'Play soundtrack');
 
       const iconEl = btn.querySelector('.audio-play-icon');
       if (iconEl) {
@@ -720,17 +728,27 @@ class App {
           `;
         } else {
           iconEl.innerHTML = `
-            <polygon points="5 3 19 12 5 21 5 3"/>
+            <polygon points="6 4 20 12 6 20 6 4"/>
           `;
         }
       }
+    });
+
+    // 2. Sync Dieter Rams Audio Player Widget on memory detail view
+    document.querySelectorAll('.audio-player-widget').forEach(widget => {
+      const btn = widget.querySelector('[data-action="toggle-audio"]');
+      if (!btn) return;
+      const trackId = btn.getAttribute('data-id');
+      const isThisPlaying = isPlaying && (trackId === currentId);
+
+      widget.classList.toggle('is-playing', isThisPlaying);
 
       const statusEl = widget.querySelector('.audio-status-label');
       if (statusEl) {
         const previewUrl = btn.getAttribute('data-preview-url');
         const duration = widget.getAttribute('data-duration') || '02:40';
         statusEl.textContent = isThisPlaying
-          ? (previewUrl && previewUrl !== 'undefined' ? 'Streaming 30s Preview' : 'Playing Ambient Synth')
+          ? (previewUrl && previewUrl !== 'undefined' && previewUrl.trim() !== '' ? 'Streaming 30s Preview' : 'Playing Ambient Synth')
           : duration;
       }
     });
@@ -885,9 +903,9 @@ class App {
           </div>
           <div class="itunes-actions">
             ${song.previewUrl ? `
-              <button type="button" class="btn ${isPlaying ? 'btn-primary' : 'btn-secondary'}" style="padding: 4px 10px; font-size: var(--text-caption);" 
+              <button type="button" class="btn ${isPlaying ? 'btn-primary is-playing' : 'btn-secondary'}" style="padding: 4px 10px; font-size: var(--text-caption);" 
                       data-action="preview-itunes-stream" data-stream-url="${song.previewUrl}" data-song-id="${song.id}">
-                ${isPlaying ? '■ Stop' : '▶ 30s'}
+                ${isPlaying ? '⏸ Pause' : '▶ 30s'}
               </button>
             ` : ''}
             <span class="card-tag" style="background: ${isSelected ? 'var(--mood-accent)' : 'var(--color-paper-200)'}; color: ${isSelected ? '#fff' : 'inherit'};">

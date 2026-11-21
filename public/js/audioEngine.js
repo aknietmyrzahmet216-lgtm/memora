@@ -61,11 +61,12 @@ class AudioEngine {
   /**
    * Play or preview an atmospheric preset
    */
-  play(presetId) {
+  play(presetId, trackId = null) {
     this._initContext();
-    this.stop();
+    this.stop(false);
 
-    this.currentPlayingId = presetId;
+    this.currentPlayingId = trackId || presetId;
+    this.currentPresetId = presetId;
     this.isPlaying = true;
 
     switch (presetId) {
@@ -83,13 +84,15 @@ class AudioEngine {
         this._playMorningLight();
         break;
     }
+
+    this._notifyState();
   }
 
   /**
    * Play an external audio stream preview (e.g. from iTunes API)
    */
   playStream(url, trackId) {
-    this.stop();
+    this.stop(false);
     this.currentPlayingId = trackId;
     this.isPlaying = true;
 
@@ -119,7 +122,7 @@ class AudioEngine {
     }
   }
 
-  stop() {
+  stop(notify = true) {
     if (this.audioEl) {
       try {
         this.audioEl.pause();
@@ -140,7 +143,9 @@ class AudioEngine {
     this.activeNodes = [];
     this.isPlaying = false;
     this.currentPlayingId = null;
-    this._notifyState();
+    if (notify) {
+      this._notifyState();
+    }
   }
 
   _notifyState() {
@@ -156,12 +161,13 @@ class AudioEngine {
     }
   }
 
-  toggle(presetId) {
-    if (this.isPlaying && this.currentPlayingId === presetId) {
+  toggle(presetId, trackId = null) {
+    const targetId = trackId || presetId;
+    if (this.isPlaying && this.currentPlayingId === targetId) {
       this.stop();
       return false;
     } else {
-      this.play(presetId);
+      this.play(presetId, targetId);
       return true;
     }
   }

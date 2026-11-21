@@ -314,7 +314,7 @@ export class UIEngine {
                     <div class="todays-title">${hero.title}</div>
                     <div class="todays-excerpt">${hero.excerpt}</div>
                   </div>
-                  <button class="todays-play-circle" data-action="toggle-audio" data-id="${hero.id}" data-preset="${hero.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${hero.soundtrack?.previewUrl || ''}" aria-label="${isPlaying ? 'Pause' : 'Play'} memory soundtrack">
+                  <button class="todays-play-circle ${isPlaying ? 'is-playing' : ''}" data-action="toggle-audio" data-id="${hero.id}" data-preset="${hero.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${hero.soundtrack?.previewUrl || ''}" aria-label="${isPlaying ? 'Pause' : 'Play'} memory soundtrack">
                     <svg class="audio-play-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                       ${isPlaying ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>' : '<polygon points="6 4 20 12 6 20 6 4"/>'}
                     </svg>
@@ -356,7 +356,7 @@ export class UIEngine {
                       <div style="font-size: 11.5px; color: #7A6662; margin-top: 2px;">${m.dateFormatted} · ${m.moodLabel}</div>
                     </div>
                     ${m.hasAudio ? `
-                      <button class="todays-play-circle" style="width: 36px; height: 36px; margin-left: auto;" data-action="toggle-audio" data-id="${m.id}" data-preset="${m.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${m.soundtrack?.previewUrl || ''}">
+                      <button class="todays-play-circle ${state.isAudioPlaying && state.audioPlayingId === m.id ? 'is-playing' : ''}" style="width: 36px; height: 36px; margin-left: auto;" data-action="toggle-audio" data-id="${m.id}" data-preset="${m.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${m.soundtrack?.previewUrl || ''}">
                         <svg class="audio-play-icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
                           ${state.isAudioPlaying && state.audioPlayingId === m.id ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>' : '<polygon points="6 4 20 12 6 20 6 4"/>'}
                         </svg>
@@ -434,7 +434,7 @@ export class UIEngine {
                       <div class="todays-excerpt" style="font-size: 12px;">${m.excerpt}</div>
                     </div>
                     ${m.hasAudio ? `
-                      <button class="todays-play-circle" style="width: 38px; height: 38px;" data-action="toggle-audio" data-id="${m.id}" data-preset="${m.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${m.soundtrack?.previewUrl || ''}">
+                      <button class="todays-play-circle ${state.isAudioPlaying && state.audioPlayingId === m.id ? 'is-playing' : ''}" style="width: 38px; height: 38px;" data-action="toggle-audio" data-id="${m.id}" data-preset="${m.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${m.soundtrack?.previewUrl || ''}">
                         <svg class="audio-play-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                           ${state.isAudioPlaying && state.audioPlayingId === m.id ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>' : '<polygon points="6 4 20 12 6 20 6 4"/>'}
                         </svg>
@@ -1388,8 +1388,8 @@ export class UIEngine {
               </div>
 
               ${selectedTrack.previewUrl ? `
-                <button type="button" class="btn btn-secondary" style="padding: 4px 10px; font-size: var(--text-caption);" data-action="preview-itunes-stream" data-stream-url="${selectedTrack.previewUrl}" data-song-id="${selectedTrack.id}">
-                  ${audioEngine.isPlaying && audioEngine.currentPlayingId === selectedTrack.id ? '■ Stop' : '▶ Play Preview'}
+                <button type="button" class="btn ${audioEngine.isPlaying && audioEngine.currentPlayingId === selectedTrack.id ? 'btn-primary is-playing' : 'btn-secondary'}" style="padding: 4px 10px; font-size: var(--text-caption);" data-action="preview-itunes-stream" data-stream-url="${selectedTrack.previewUrl}" data-song-id="${selectedTrack.id}">
+                  ${audioEngine.isPlaying && audioEngine.currentPlayingId === selectedTrack.id ? '⏸ Pause' : '▶ Play Preview'}
                 </button>
               ` : ''}
             </div>
@@ -1422,8 +1422,8 @@ export class UIEngine {
 
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto;">
                     <span class="card-tag" style="background: var(--color-paper-200);">${preset.tag}</span>
-                    <button type="button" class="soundtrack-preview-btn" data-action="preview-soundtrack" data-id="${preset.id}">
-                      ${isPlaying ? '■ Stop Synth' : '▶ Listen Preview'}
+                    <button type="button" class="soundtrack-preview-btn ${isPlaying ? 'is-playing' : ''}" data-action="preview-soundtrack" data-id="${preset.id}">
+                      ${isPlaying ? '⏸ Pause' : '▶ Listen Preview'}
                     </button>
                   </div>
                 </div>

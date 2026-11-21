@@ -1581,6 +1581,14 @@
     color: var(--color-ink-900);
   }
 
+  .soundtrack-preview-btn.is-playing {
+    background-color: var(--mood-accent, #B87866) !important;
+    color: #ffffff !important;
+    border-color: var(--mood-accent, #B87866) !important;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(184, 120, 102, 0.35);
+  }
+
   /* Step 4: Summary Review Card */
   .review-summary-card {
     background-color: var(--color-paper-100);
@@ -2891,6 +2899,19 @@
   .todays-play-circle:hover {
     transform: scale(1.1);
     background: #ffffff;
+  }
+
+  .todays-play-circle.is-playing {
+    background: var(--mood-accent, #B87866) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(184, 120, 102, 0.45);
+    transform: scale(1.05);
+  }
+
+  .todays-play-circle.is-playing svg,
+  .todays-play-circle.is-playing .audio-play-icon {
+    fill: #ffffff !important;
+    color: #ffffff !important;
   }
 
   /* 3. Create New Memory Pill */
