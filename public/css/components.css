@@ -2323,4 +2323,618 @@
       text-align: left;
     }
   }
+
+  /* ==========================================================================
+     ETHEREAL BLUSH & GLASSMORPHISM DESIGN SYSTEM (SCREENSHOTS 1 & 2 SPEC)
+     ========================================================================== */
+
+  /* Intro Splash Screen (Screenshot 1) */
+  .intro-screen-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 9999;
+    background: url('../assets/blossom_bg.jpg') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 24px 80px 24px;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .intro-center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .intro-sparkle {
+    color: #4A3B37;
+    font-size: 20px;
+    margin-bottom: 8px;
+    animation: gentlePulse 3s infinite ease-in-out;
+  }
+
+  @keyframes gentlePulse {
+    0%, 100% { opacity: 0.7; transform: scale(0.95); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  .intro-brand-title {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: clamp(42px, 11vw, 58px);
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    color: #3D2E2B;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.05;
+  }
+
+  .intro-subtitle {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: clamp(17px, 4.8vw, 23px);
+    font-style: italic;
+    font-weight: 400;
+    color: #7A6662;
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .intro-name-card {
+    margin-top: 36px;
+    background: rgba(255, 255, 255, 0.48);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 24px;
+    padding: 16px 20px;
+    width: 100%;
+    max-width: 290px;
+    box-shadow: 0 10px 28px rgba(189, 137, 131, 0.14);
+  }
+
+  .intro-name-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7A6662;
+    margin-bottom: 8px;
+  }
+
+  .intro-name-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 9999px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #3D2E2B;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .intro-name-input:focus {
+    background: #ffffff;
+    border-color: #C9827B;
+    box-shadow: 0 0 0 3px rgba(201, 130, 123, 0.22);
+  }
+
+  .intro-enter-circle-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    color: #3D2E2B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(189, 137, 131, 0.2);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 24px;
+  }
+
+  .intro-enter-circle-btn:hover, .intro-enter-circle-btn:active {
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 12px 32px rgba(189, 137, 131, 0.28);
+  }
+
+  /* Garden App Container (Screenshot 2 Spec - Clean on Laptops & Phones) */
+  .garden-app-shell {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    position: relative;
+    padding: 20px 16px 110px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .garden-app-shell {
+      margin: 24px auto;
+      border-radius: 36px;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 24px 64px rgba(150, 90, 85, 0.16), 0 0 0 1px rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 28px 24px 120px 24px;
+    }
+  }
+
+  /* 1. Top Greeting Pill */
+  .glass-greeting-pill {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: 9999px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 24px rgba(189, 137, 131, 0.1);
+  }
+
+  .greeting-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .greeting-salutation {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
+    color: #3D2E2B;
+    line-height: 1.25;
+  }
+
+  .greeting-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #3D2E2B;
+    line-height: 1.25;
+  }
+
+  .greeting-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .greeting-avatar:hover {
+    transform: scale(1.08);
+  }
+
+  /* 2. Today's Memory Card */
+  .glass-todays-memory-card {
+    margin-top: 18px;
+    background: rgba(255, 255, 255, 0.46);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 28px;
+    padding: 16px;
+    box-shadow: 0 12px 32px rgba(189, 137, 131, 0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .glass-todays-memory-card:hover {
+    box-shadow: 0 16px 40px rgba(189, 137, 131, 0.18);
+  }
+
+  .todays-memory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+
+  .todays-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #3D2E2B;
+    letter-spacing: -0.01em;
+  }
+
+  .todays-date {
+    font-size: 11px;
+    font-weight: 500;
+    color: #7A6662;
+    letter-spacing: 0.02em;
+  }
+
+  .todays-photo-box {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .todays-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .glass-todays-memory-card:hover .todays-photo {
+    transform: scale(1.03);
+  }
+
+  .todays-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(30, 20, 20, 0.8) 0%, rgba(30, 20, 20, 0.25) 45%, transparent 70%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 18px;
+  }
+
+  .todays-meta-left {
+    max-width: 72%;
+    color: #ffffff;
+  }
+
+  .todays-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .todays-excerpt {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .todays-play-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    color: #3D2E2B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .todays-play-circle:hover {
+    transform: scale(1.1);
+    background: #ffffff;
+  }
+
+  /* 3. Create New Memory Pill */
+  .glass-create-btn {
+    margin-top: 18px;
+    width: 100%;
+    border-radius: 9999px;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.58);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    color: #3D2E2B;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(189, 137, 131, 0.1);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-create-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 12px 28px rgba(189, 137, 131, 0.18);
+  }
+
+  .glass-create-btn .plus-icon {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  /* 4. Mood of the Day Card */
+  .glass-mood-card {
+    margin-top: 18px;
+    background: rgba(255, 255, 255, 0.46);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 24px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(189, 137, 131, 0.1);
+    transition: all 0.25s ease;
+  }
+
+  .glass-mood-card:hover {
+    background: rgba(255, 255, 255, 0.65);
+    transform: translateY(-1px);
+  }
+
+  .mood-tulip-art {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  .mood-card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #3D2E2B;
+    line-height: 1.2;
+  }
+
+  .mood-card-sub {
+    font-size: 13px;
+    color: #7A6662;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  /* 5. Fixed Glass Bottom Navigation Bar */
+  .glass-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 440px;
+    background: rgba(255, 250, 248, 0.85);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) 16px;
+    z-index: 1000;
+    box-shadow: 0 -8px 28px rgba(189, 137, 131, 0.12);
+  }
+
+  @media (min-width: 768px) {
+    .glass-bottom-nav {
+      border-radius: 9999px;
+      bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 12px 36px rgba(189, 137, 131, 0.18);
+    }
+  }
+
+  .nav-tab-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #8C7A77;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-tab-item svg {
+    stroke-width: 1.8;
+    transition: stroke 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav-tab-item:hover, .nav-tab-item.active {
+    color: #3D2E2B;
+  }
+
+  .nav-tab-item.active svg {
+    stroke: #C9827B;
+    transform: scale(1.12);
+  }
+
+  /* 6. Profile & Garden Statistics View */
+  .profile-card-glass {
+    background: rgba(255, 255, 255, 0.52);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: 28px;
+    padding: 24px 20px;
+    box-shadow: 0 12px 32px rgba(189, 137, 131, 0.12);
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .profile-avatar-large {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    margin: 0 auto 12px auto;
+  }
+
+  .profile-user-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #3D2E2B;
+    margin-bottom: 4px;
+  }
+
+  .profile-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #C9827B;
+    background: rgba(201, 130, 123, 0.14);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    margin-bottom: 18px;
+  }
+
+  .stats-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .stat-box-glass {
+    background: rgba(255, 255, 255, 0.52);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 18px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+
+  .stat-box-val {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #3D2E2B;
+  }
+
+  .stat-box-lbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: #7A6662;
+    margin-top: 2px;
+  }
+
+  .flora-breakdown-card {
+    margin-top: 14px;
+    background: rgba(255, 255, 255, 0.48);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 20px;
+    padding: 16px;
+    text-align: left;
+  }
+
+  .flora-breakdown-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #3D2E2B;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .flora-bar-wrapper {
+    height: 10px;
+    border-radius: 9999px;
+    overflow: hidden;
+    display: flex;
+    background: rgba(0, 0, 0, 0.05);
+    margin-bottom: 12px;
+  }
+
+  .flora-bar-sunny {
+    background: #E87A3E;
+  }
+
+  .flora-bar-calm {
+    background: #4A7C6F;
+  }
+
+  .flora-bar-nostalgic {
+    background: #8C5A5A;
+  }
+
+  .flora-legend-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #7A6662;
+  }
+
+  .flora-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .flora-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .profile-actions-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .profile-btn-action {
+    width: 100%;
+    border-radius: 9999px;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 }

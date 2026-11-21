@@ -53,13 +53,23 @@
   body {
     max-width: 100vw;
     overflow-x: hidden;
-    background-color: var(--mood-canvas-bg, var(--color-paper-100));
-    color: var(--mood-ink, var(--color-ink-900));
+    background-color: #F8E3E1;
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(247, 208, 204, 0.45) 0%, transparent 45%),
+      url('../assets/blossom_bg.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: var(--color-blush-text, #3D2E2B);
     font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: var(--leading-editorial);
     letter-spacing: var(--tracking-normal);
     position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
     transition: background-color var(--transition-smooth), color var(--transition-normal);
   }
 

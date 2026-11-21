@@ -68,7 +68,9 @@ class App {
           eventName === 'MEMORY_ADDED' || eventName === 'MEMORY_DELETED' || 
           eventName === 'VIEW_CHANGED' || eventName === 'TIME_CAPSULE_SEALED' ||
           eventName === 'TIME_CAPSULE_UNSEALED' || eventName === 'CAPSULE_REFLECTION_SAVED' ||
-          eventName === 'DEMO_DATA_RESET') {
+          eventName === 'DEMO_DATA_RESET' || eventName === 'PROFILE_UPDATED' ||
+          eventName === 'INTRO_COMPLETED' || eventName === 'INTRO_REOPENED' ||
+          eventName === 'TAB_CHANGED') {
         ui.transition(() => {
           ui.render();
         });
@@ -113,9 +115,44 @@ class App {
       const action = actionEl.getAttribute('data-action');
 
       switch (action) {
+        // Intro & Onboarding actions (Screenshot 1)
+        case 'submit-intro': {
+          e.preventDefault();
+          const input = document.getElementById('intro-user-name');
+          const name = input ? input.value.trim() : '';
+          store.setUserName(name || 'Alika');
+          break;
+        }
+
+        case 'replay-intro': {
+          e.preventDefault();
+          store.reopenIntro();
+          break;
+        }
+
+        // Navigation Tabs (Screenshot 2: Home, Archive, Capsule, Profile)
+        case 'nav-tab': {
+          e.preventDefault();
+          const tab = actionEl.getAttribute('data-tab') || 'home';
+          store.setActiveTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          break;
+        }
+
+        case 'save-profile-name': {
+          e.preventDefault();
+          const input = document.getElementById('edit-profile-name-input');
+          if (input) {
+            const name = input.value.trim();
+            store.setUserName(name || 'Alika');
+          }
+          break;
+        }
+
         // Navigation & Views
         case 'nav-home': {
           e.preventDefault();
+          store.setActiveTab('home');
           store.setView('home');
           window.scrollTo({ top: 0, behavior: 'smooth' });
           break;
@@ -616,6 +653,16 @@ class App {
           clearTimeout(this.itunesDebounce);
           this._handleItunesSearch(query);
         }
+      }
+      if (e.key === 'Enter' && e.target && e.target.id === 'intro-user-name') {
+        e.preventDefault();
+        const name = e.target.value.trim();
+        store.setUserName(name || 'Alika');
+      }
+      if (e.key === 'Enter' && e.target && e.target.id === 'edit-profile-name-input') {
+        e.preventDefault();
+        const name = e.target.value.trim();
+        if (name) store.setUserName(name);
       }
     });
   }

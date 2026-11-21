@@ -37,6 +37,13 @@ class MemoryStore {
           activeView: parsed.activeView || 'home',
           activeMemoryId: parsed.activeMemoryId || null,
           selectedMemoryId: parsed.selectedMemoryId || 'mem-day-1',
+          userProfile: parsed.userProfile || {
+            name: 'Alika',
+            avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+            hasCompletedIntro: false,
+            joinedDate: 'November 2026'
+          },
+          activeTab: parsed.activeTab || 'home',
           audioPlayingId: null,
           isAudioPlaying: false,
           wizardDraft: {
@@ -63,6 +70,13 @@ class MemoryStore {
       activeView: 'home',
       activeMemoryId: null,
       selectedMemoryId: 'mem-day-1',
+      userProfile: {
+        name: 'Alika',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        hasCompletedIntro: false,
+        joinedDate: 'November 2026'
+      },
+      activeTab: 'home',
       audioPlayingId: null,
       isAudioPlaying: false,
       wizardDraft: {
@@ -88,7 +102,9 @@ class MemoryStore {
         archiveLayout: this._state.archiveLayout,
         activeView: this._state.activeView,
         activeMemoryId: this._state.activeMemoryId,
-        selectedMemoryId: this._state.selectedMemoryId
+        selectedMemoryId: this._state.selectedMemoryId,
+        userProfile: this._state.userProfile,
+        activeTab: this._state.activeTab
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
     } catch (e) {
@@ -205,6 +221,77 @@ class MemoryStore {
     }
   }
 
+  // Profile & Intro management
+  setUserName(name) {
+    const cleanName = (name || '').trim() || 'Alika';
+    this.setState({
+      userProfile: {
+        ...this._state.userProfile,
+        name: cleanName,
+        hasCompletedIntro: true
+      }
+    }, 'PROFILE_UPDATED');
+  }
+
+  completeIntro() {
+    this.setState({
+      userProfile: {
+        ...this._state.userProfile,
+        hasCompletedIntro: true
+      }
+    }, 'INTRO_COMPLETED');
+  }
+
+  reopenIntro() {
+    this.setState({
+      userProfile: {
+        ...this._state.userProfile,
+        hasCompletedIntro: false
+      }
+    }, 'INTRO_REOPENED');
+  }
+
+  setActiveTab(tab) {
+    this.setState({
+      activeTab: tab,
+      activeView: 'home'
+    }, 'TAB_CHANGED');
+  }
+
+  getGardenStats() {
+    const memories = this._state.memories || [];
+    const capsules = Object.values(this._state.timeCapsules || {});
+    
+    let happy = 0;
+    let calm = 0;
+    let nostalgic = 0;
+    let withAudio = 0;
+
+    memories.forEach(m => {
+      if (m.mood === 'happy-sunny') happy++;
+      else if (m.mood === 'calm-peaceful') calm++;
+      else if (m.mood === 'nostalgic-emotional') nostalgic++;
+      if (m.hasAudio) withAudio++;
+    });
+
+    const total = memories.length;
+    const sealedCapsules = capsules.filter(c => c.isSealed).length;
+    const unlockedCapsules = capsules.filter(c => !c.isSealed || c.isSimulatedUnlock).length;
+
+    return {
+      total,
+      happy,
+      calm,
+      nostalgic,
+      withAudio,
+      sealedCapsules,
+      unlockedCapsules,
+      happyPct: total ? Math.round((happy / total) * 100) : 40,
+      calmPct: total ? Math.round((calm / total) * 100) : 40,
+      nostalgicPct: total ? Math.round((nostalgic / total) * 100) : 20
+    };
+  }
+
   /**
    * Reset all demo data to pristine initial state
    */
@@ -227,6 +314,13 @@ class MemoryStore {
       activeView: 'home',
       activeMemoryId: null,
       selectedMemoryId: 'mem-day-1',
+      userProfile: {
+        name: 'Alika',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        hasCompletedIntro: false,
+        joinedDate: 'November 2026'
+      },
+      activeTab: 'home',
       audioPlayingId: null,
       isAudioPlaying: false,
       wizardDraft: {

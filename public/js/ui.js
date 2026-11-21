@@ -90,11 +90,449 @@ export class UIEngine {
    */
   render() {
     const state = store.getState();
+    const userProfile = state.userProfile || { name: 'Alika', hasCompletedIntro: false };
+
+    // 1. If intro not completed, display full-screen Intro / Onboarding (Screenshot 1)
+    if (!userProfile.hasCompletedIntro) {
+      this.renderIntroScreen(userProfile);
+      return;
+    }
+
+    // 2. Memory Detail View
     if (state.activeView === 'memory-view' && state.activeMemoryId) {
       this.renderMemoryView(state.activeMemoryId);
-    } else {
-      this.renderHome();
+      return;
     }
+
+    // 3. Tab Navigation (Screenshot 2 Spec: Home, Archive, Capsule, Profile)
+    switch (state.activeTab) {
+      case 'archive':
+        this.renderArchiveScreen(state);
+        break;
+      case 'capsule':
+        this.renderTimeCapsuleScreen(state);
+        break;
+      case 'profile':
+        this.renderProfileScreen(state);
+        break;
+      case 'home':
+      default:
+        this.renderHomeScreen(state);
+        break;
+    }
+  }
+
+  /**
+   * Render Intro Splash Screen (Screenshot 1 Spec)
+   */
+  renderIntroScreen(userProfile) {
+    const appEl = document.getElementById('app');
+    if (!appEl) return;
+
+    appEl.innerHTML = `
+      <div class="intro-screen-overlay" role="dialog" aria-modal="true" aria-label="Welcome to Memora">
+        <div></div>
+
+        <div class="intro-center-content animate-fade-in">
+          <div class="intro-sparkle">✦</div>
+          <h1 class="intro-brand-title">MEMORA</h1>
+          <div class="intro-subtitle">a garden of your memories</div>
+
+          <div class="intro-name-card">
+            <label for="intro-user-name" class="intro-name-label">What should we call you?</label>
+            <input type="text" id="intro-user-name" class="intro-name-input" 
+                   placeholder="e.g. Alika" 
+                   value="${userProfile.name !== 'Alika' ? userProfile.name : ''}" 
+                   autocomplete="name" maxlength="32" />
+          </div>
+
+          <button class="intro-enter-circle-btn" data-action="submit-intro" aria-label="Enter garden">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <div style="font-size: 11px; color: #7A6662; opacity: 0.85; letter-spacing: 0.04em;">
+          Tap the arrow to step into your sanctuary
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render Home Screen (Screenshot 2 Spec)
+   */
+  renderHomeScreen(state) {
+    const appEl = document.getElementById('app');
+    if (!appEl) return;
+
+    const hero = store.getHeroMemory();
+    const userProfile = state.userProfile || { name: 'Alika' };
+    const hour = new Date().getHours();
+    const salutation = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
+    
+    // Format date e.g. "Nov 21, Sat"
+    const todayFormatted = new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      weekday: 'short'
+    }).format(new Date());
+
+    const isPlaying = state.isAudioPlaying && state.audioPlayingId === hero.id;
+
+    let moodFriendly = 'Happy & Calm';
+    if (state.currentMood === 'happy-sunny') moodFriendly = 'Happy & Radiant';
+    else if (state.currentMood === 'calm-peaceful') moodFriendly = 'Sage & Grounded';
+    else if (state.currentMood === 'nostalgic-emotional') moodFriendly = 'Tender & Nostalgic';
+
+    appEl.innerHTML = `
+      <div class="garden-app-shell animate-fade-in">
+        <!-- 1. Top Greeting Pill (Screenshot 2) -->
+        <div class="glass-greeting-pill">
+          <div class="greeting-left">
+            <span class="greeting-salutation">${salutation},</span>
+            <span class="greeting-name">${userProfile.name} ♡</span>
+          </div>
+          <img class="greeting-avatar" src="${userProfile.avatarUrl}" alt="${userProfile.name}" data-action="nav-tab" data-tab="profile" title="View Profile & Stats" />
+        </div>
+
+        <!-- 2. Today's Memory Card (Screenshot 2) -->
+        <div class="glass-todays-memory-card" data-action="view-full-memory" data-id="${hero.id}">
+          <div class="todays-memory-header">
+            <span class="todays-label">Today's Memory</span>
+            <span class="todays-date">${todayFormatted}</span>
+          </div>
+          <div class="todays-photo-box">
+            <img class="todays-photo" src="${hero.photoUrl}" alt="${hero.title}" />
+            <div class="todays-photo-overlay">
+              <div class="todays-meta-left">
+                <div class="todays-title">${hero.title}</div>
+                <div class="todays-excerpt">${hero.excerpt}</div>
+              </div>
+              <button class="todays-play-circle" data-action="toggle-audio" data-id="${hero.id}" data-preset="${hero.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${hero.soundtrack?.previewUrl || ''}" aria-label="${isPlaying ? 'Pause' : 'Play'} memory soundtrack">
+                <svg class="audio-play-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  ${isPlaying ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>' : '<polygon points="6 4 20 12 6 20 6 4"/>'}
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Create New Memory Pill (Screenshot 2) -->
+        <button class="glass-create-btn" data-action="open-wizard">
+          <span class="plus-icon">+</span>
+          <span>Create New Memory</span>
+        </button>
+
+        <!-- 4. Mood of the Day Card (Screenshot 2) -->
+        <div class="glass-mood-card" data-action="nav-tab" data-tab="archive">
+          <img class="mood-tulip-art" src="assets/holographic_flower.svg" alt="Holographic flower" />
+          <div class="mood-card-info">
+            <div class="mood-card-title">Mood of the Day</div>
+            <div class="mood-card-sub">${moodFriendly}</div>
+          </div>
+        </div>
+
+        <!-- Recent Chronicles in Your Garden -->
+        <div style="margin-top: 24px; padding-bottom: 20px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px;">
+            <span style="font-size: 13px; font-weight: 600; color: #3D2E2B; letter-spacing: -0.01em;">Recent in Your Garden</span>
+            <button class="btn-link" data-action="nav-tab" data-tab="archive" style="font-size: 11px; color: #C9827B; font-weight: 600; background: none; border: none; cursor: pointer;">View All →</button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            ${state.memories.slice(1, 4).map(m => `
+              <div class="glass-mood-card" style="margin-top: 0; padding: 10px 14px; gap: 12px;" data-action="view-full-memory" data-id="${m.id}">
+                <img src="${m.photoUrl}" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover;" alt="${m.title}" />
+                <div style="overflow: hidden; flex: 1;">
+                  <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 15px; font-weight: 600; color: #3D2E2B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.title}</div>
+                  <div style="font-size: 11px; color: #7A6662; margin-top: 1px;">${m.dateFormatted} · ${m.moodLabel}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 5. Bottom Navigation Bar (Screenshot 2) -->
+        ${this._renderBottomNav('home')}
+      </div>
+    `;
+  }
+
+  /**
+   * Render Archive Screen with Glassmorphism
+   */
+  renderArchiveScreen(state) {
+    const appEl = document.getElementById('app');
+    if (!appEl) return;
+
+    const filtered = store.getFilteredMemories();
+
+    appEl.innerHTML = `
+      <div class="garden-app-shell animate-fade-in">
+        <!-- Top Header -->
+        <div class="glass-greeting-pill" style="margin-bottom: 16px;">
+          <div class="greeting-left">
+            <span class="greeting-salutation">Garden Chronicle</span>
+            <span class="greeting-name">Memory Archive 🌿</span>
+          </div>
+          <button class="btn btn-secondary" data-action="open-wizard" style="padding: 6px 14px; font-size: 12px; border-radius: 9999px;">+ New</button>
+        </div>
+
+        <!-- Search input -->
+        <div style="position: relative; margin-bottom: 12px;">
+          <input type="search" class="intro-name-input archive-search-input" 
+                 placeholder="Search memories, locations, thoughts..." 
+                 value="${state.searchQuery || ''}" 
+                 data-action="archive-search" style="text-align: left; padding-left: 18px;" />
+        </div>
+
+        <!-- Mood Filter Chips -->
+        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;" class="scroll-pills">
+          <button class="badge-chip ${state.activeFilter === 'all' ? 'active' : ''}" data-action="filter-mood" data-filter="all">All</button>
+          <button class="badge-chip ${state.activeFilter === 'happy-sunny' ? 'active' : ''}" data-action="filter-mood" data-filter="happy-sunny">☀️ Radiant</button>
+          <button class="badge-chip ${state.activeFilter === 'calm-peaceful' ? 'active' : ''}" data-action="filter-mood" data-filter="calm-peaceful">🌿 Calm</button>
+          <button class="badge-chip ${state.activeFilter === 'nostalgic-emotional' ? 'active' : ''}" data-action="filter-mood" data-filter="nostalgic-emotional">🍂 Sepia</button>
+        </div>
+
+        <!-- Cards List -->
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          ${filtered.length === 0 ? `
+            <div class="profile-card-glass" style="padding: 30px 16px;">
+              <p style="color: #7A6662; font-size: 14px;">No memories found in this garden corner.</p>
+            </div>
+          ` : filtered.map(m => `
+            <div class="glass-todays-memory-card" style="margin-top: 0; padding: 12px;" data-action="view-full-memory" data-id="${m.id}">
+              <div class="todays-memory-header" style="margin-bottom: 8px;">
+                <span class="todays-label">${m.title}</span>
+                <span class="todays-date">${m.dateFormatted}</span>
+              </div>
+              <div class="todays-photo-box" style="height: 180px;">
+                <img class="todays-photo" src="${m.photoUrl}" alt="${m.title}" loading="lazy" />
+                <div class="todays-photo-overlay">
+                  <div class="todays-meta-left" style="max-width: 75%;">
+                    <div class="todays-excerpt" style="font-size: 11px;">${m.excerpt}</div>
+                  </div>
+                  ${m.hasAudio ? `
+                    <button class="todays-play-circle" style="width: 38px; height: 38px;" data-action="toggle-audio" data-id="${m.id}" data-preset="${m.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${m.soundtrack?.previewUrl || ''}">
+                      <svg class="audio-play-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        ${state.isAudioPlaying && state.audioPlayingId === m.id ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>' : '<polygon points="6 4 20 12 6 20 6 4"/>'}
+                      </svg>
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        ${this._renderBottomNav('archive')}
+      </div>
+    `;
+  }
+
+  /**
+   * Render Time Capsule Screen with Glassmorphism
+   */
+  renderTimeCapsuleScreen(state) {
+    const appEl = document.getElementById('app');
+    if (!appEl) return;
+
+    const capsules = Object.entries(state.timeCapsules || {});
+
+    appEl.innerHTML = `
+      <div class="garden-app-shell animate-fade-in">
+        <div class="glass-greeting-pill" style="margin-bottom: 16px;">
+          <div class="greeting-left">
+            <span class="greeting-salutation">Digital Vault</span>
+            <span class="greeting-name">Time Capsules 🔒</span>
+          </div>
+        </div>
+
+        <div class="glass-mood-card" style="margin-top: 0; margin-bottom: 18px;">
+          <div style="font-size: 32px;">🕰️</div>
+          <div>
+            <div class="mood-card-title">Letters to the Future</div>
+            <div class="mood-card-sub">Seal memories with reflection prompts to unlock in 1, 3, or 12 months.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          ${capsules.length === 0 ? `
+            <div class="profile-card-glass">
+              <p style="color: #7A6662; font-size: 13px;">No sealed capsules yet. Open any memory and tap "Seal in Time Capsule" to create one.</p>
+            </div>
+          ` : capsules.map(([memId, cap]) => {
+            const mem = state.memories.find(m => m.id === memId);
+            if (!mem) return '';
+            return `
+              <div class="glass-mood-card" style="margin-top: 0; padding: 14px; flex-direction: column; align-items: flex-start; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                  <span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 16px; color: #3D2E2B;">${mem.title}</span>
+                  <span style="font-size: 11px; padding: 2px 8px; border-radius: 9999px; background: rgba(201,130,123,0.18); color: #C9827B; font-weight: 600;">
+                    ${cap.isSealed ? '🔒 Locked' : '🔓 Unlocked'}
+                  </span>
+                </div>
+                <div style="font-size: 12px; color: #7A6662;">
+                  Unlocks: ${cap.unlockDateFormatted || 'Simulated Future'}
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 6px; width: 100%;">
+                  <button class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 12px; border-radius: 9999px;" data-action="simulate-time-travel" data-id="${memId}">
+                    Simulate Time Travel 🚀
+                  </button>
+                  <button class="btn btn-primary" style="padding: 8px 14px; font-size: 12px; border-radius: 9999px;" data-action="view-full-memory" data-id="${memId}">
+                    View Memory
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${this._renderBottomNav('capsule')}
+      </div>
+    `;
+  }
+
+  /**
+   * Render Profile Screen with Statistics (User Request!)
+   */
+  renderProfileScreen(state) {
+    const appEl = document.getElementById('app');
+    if (!appEl) return;
+
+    const profile = state.userProfile || { name: 'Alika', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' };
+    const stats = store.getGardenStats();
+
+    appEl.innerHTML = `
+      <div class="garden-app-shell animate-fade-in">
+        <!-- Profile Glass Card -->
+        <div class="profile-card-glass">
+          <img class="profile-avatar-large" src="${profile.avatarUrl}" alt="${profile.name}" />
+          <h2 class="profile-user-name">${profile.name}</h2>
+          <span class="profile-badge">🌸 Gardener of Memories</span>
+
+          <!-- Edit Name Input -->
+          <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 8px;">
+            <input type="text" id="edit-profile-name-input" class="intro-name-input" 
+                   value="${profile.name}" style="max-width: 170px; padding: 6px 12px; font-size: 13px;" placeholder="Your name..." />
+            <button class="btn btn-secondary" data-action="save-profile-name" style="padding: 6px 14px; font-size: 12px; border-radius: 9999px;">Save</button>
+          </div>
+        </div>
+
+        <!-- 2x2 Stats Grid -->
+        <div class="stats-grid-2x2">
+          <div class="stat-box-glass">
+            <div class="stat-box-val">${stats.total}</div>
+            <div class="stat-box-lbl">Memories Seeded</div>
+          </div>
+          <div class="stat-box-glass">
+            <div class="stat-box-val">${stats.withAudio}</div>
+            <div class="stat-box-lbl">Harmonized Songs</div>
+          </div>
+          <div class="stat-box-glass">
+            <div class="stat-box-val">${stats.sealedCapsules}</div>
+            <div class="stat-box-lbl">Capsules Sealed</div>
+          </div>
+          <div class="stat-box-glass">
+            <div class="stat-box-val">${stats.total + 3}</div>
+            <div class="stat-box-lbl">Reflection Days</div>
+          </div>
+        </div>
+
+        <!-- Emotional Flora Breakdown -->
+        <div class="flora-breakdown-card">
+          <div class="flora-breakdown-title">
+            <span>🌿</span>
+            <span>Emotional Flora Distribution</span>
+          </div>
+
+          <div class="flora-bar-wrapper">
+            <div class="flora-bar-sunny" style="width: ${stats.happyPct}%" title="Radiant Warmth (${stats.happyPct}%)"></div>
+            <div class="flora-bar-calm" style="width: ${stats.calmPct}%" title="Sage Calm (${stats.calmPct}%)"></div>
+            <div class="flora-bar-nostalgic" style="width: ${stats.nostalgicPct}%" title="Sepia Longing (${stats.nostalgicPct}%)"></div>
+          </div>
+
+          <div class="flora-legend-row">
+            <div class="flora-legend-item">
+              <span class="flora-legend-dot flora-bar-sunny"></span>
+              <span>Radiant: ${stats.happyPct}%</span>
+            </div>
+            <div class="flora-legend-item">
+              <span class="flora-legend-dot flora-bar-calm"></span>
+              <span>Calm: ${stats.calmPct}%</span>
+            </div>
+            <div class="flora-legend-item">
+              <span class="flora-legend-dot flora-bar-nostalgic"></span>
+              <span>Nostalgic: ${stats.nostalgicPct}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions Column -->
+        <div class="profile-actions-column">
+          <button class="profile-btn-action glass-mood-card" data-action="replay-intro" style="margin-top: 0; justify-content: center; color: #3D2E2B;">
+            <span>✨</span>
+            <span>Replay Memora Intro Screen</span>
+          </button>
+          
+          <button class="profile-btn-action glass-mood-card" data-action="reset-demo-data" style="margin-top: 0; justify-content: center; color: #8C5A5A;">
+            <span>🔄</span>
+            <span>Reset to Pristine Demo Garden</span>
+          </button>
+        </div>
+
+        ${this._renderBottomNav('profile')}
+      </div>
+    `;
+  }
+
+  /**
+   * Fixed Glass Bottom Navigation Bar (Screenshot 2 Spec)
+   */
+  _renderBottomNav(activeTab) {
+    return `
+      <nav class="glass-bottom-nav" role="navigation" aria-label="Main Navigation">
+        <button class="nav-tab-item ${activeTab === 'home' ? 'active' : ''}" data-action="nav-tab" data-tab="home">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </button>
+
+        <button class="nav-tab-item ${activeTab === 'archive' ? 'active' : ''}" data-action="nav-tab" data-tab="archive">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+          <span>Archive</span>
+        </button>
+
+        <button class="nav-tab-item ${activeTab === 'capsule' ? 'active' : ''}" data-action="nav-tab" data-tab="capsule">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>Time Capsule</span>
+        </button>
+
+        <button class="nav-tab-item ${activeTab === 'profile' ? 'active' : ''}" data-action="nav-tab" data-tab="profile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Profile</span>
+        </button>
+      </nav>
+    `;
+  }
+
+  /**
+   * Legacy Home View Fallback
+   */
+  renderHome() {
+    this.render();
   }
 
   /**
@@ -1205,13 +1643,7 @@ export class UIEngine {
         </div>
       </main>
 
-      <!-- Footer -->
-      <footer class="site-footer" role="contentinfo">
-        <div class="container footer-inner">
-          <div><strong>MEMORA</strong> — An Emotional AI Digital Chronicle.</div>
-          <div>Pure HTML5 · Modular CSS3 · Vanilla ES6+</div>
-        </div>
-      </footer>
+      ${this._renderBottomNav('home')}
     `;
   }
 

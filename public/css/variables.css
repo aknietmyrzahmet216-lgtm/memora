@@ -188,4 +188,21 @@
     --mood-glow: 0 10px 36px rgba(140, 90, 90, 0.14);
     --mood-polaroid-tilt: -1.6deg;
   }
+
+  /* ==========================================================================
+     8. Ethereal Garden & Frosted Glass Design Tokens (Screenshots 1 & 2 Spec)
+     ========================================================================== */
+  :root {
+    --font-floral: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --color-blush-text: #3D2E2B;
+    --color-blush-sub: #7A6662;
+    --color-blush-accent: #C9827B;
+    --color-blush-light: #FDE8E5;
+    --glass-bg: rgba(255, 255, 255, 0.48);
+    --glass-bg-hover: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.72);
+    --glass-blur: blur(24px) saturate(140%);
+    --glass-shadow: 0 12px 36px rgba(189, 137, 131, 0.12), 0 2px 8px rgba(255, 255, 255, 0.6);
+  }
 }
