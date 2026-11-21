@@ -90,7 +90,7 @@ app.post('/api/analyze', async (req, res) => {
   if (apiKey && apiKey !== 'your_key_here' && apiKey.trim().length > 10) {
     try {
       console.log('[MEMORA API] Calling Gemini 2.5 Flash for multimodal analysis...');
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1beta' });
 
       const contents = [];
 
