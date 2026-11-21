@@ -218,14 +218,19 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start Express Server
-app.listen(PORT, () => {
-  console.log(`
+// Start Express Server (local development or standalone node container)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`
   ══════════════════════════════════════════════════════
   ✦ MEMORA — Emotional AI Digital Chronicle
   ✦ Running at: http://localhost:${PORT}
   ✦ Static Assets: ./public
   ✦ Gemini API: ${process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_key_here' ? 'CONNECTED (gemini-2.5-flash)' : 'FALLBACK MODE (Set GEMINI_API_KEY in .env)'}
   ══════════════════════════════════════════════════════
-  `);
-});
+    `);
+  });
+}
+
+// Export app for Vercel Serverless Function handler
+export default app;
