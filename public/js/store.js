@@ -189,6 +189,22 @@ class MemoryStore {
     }, 'AUDIO_TOGGLED');
   }
 
+  setAudioState(memoryId, isPlaying) {
+    this.setState({
+      audioPlayingId: isPlaying ? memoryId : null,
+      isAudioPlaying: Boolean(isPlaying)
+    }, 'AUDIO_TOGGLED');
+  }
+
+  stopAudio() {
+    if (this._state.isAudioPlaying || this._state.audioPlayingId) {
+      this.setState({
+        audioPlayingId: null,
+        isAudioPlaying: false
+      }, 'AUDIO_TOGGLED');
+    }
+  }
+
   /**
    * Reset all demo data to pristine initial state
    */

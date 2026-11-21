@@ -359,9 +359,6 @@ export class UIEngine {
           </div>
         </div>
       </footer>
-
-      <!-- Modals Container (Wizard, Detail & Time Capsule) -->
-      <div id="modal-container"></div>
     `;
   }
 
@@ -534,24 +531,22 @@ export class UIEngine {
     const previewUrl = memory.soundtrack?.previewUrl || '';
 
     return `
-      <div class="audio-player-widget ${isPlaying ? 'is-playing' : ''}" role="region" aria-label="Voice Memo Player">
+      <div class="audio-player-widget ${isPlaying ? 'is-playing' : ''}" role="region" aria-label="Voice Memo Player" data-duration="${memory.audioDuration || '02:40'}">
         <button class="audio-play-btn" data-action="toggle-audio" data-id="${memory.id}" data-preset="${memory.soundtrackPresetId || 'golden-afternoon'}" data-preview-url="${previewUrl}" aria-label="${isPlaying ? 'Pause' : 'Play'} soundtrack reflection">
-          ${isPlaying ? `
-            <svg class="audio-play-icon" viewBox="0 0 24 24">
+          <svg class="audio-play-icon" viewBox="0 0 24 24">
+            ${isPlaying ? `
               <rect x="6" y="4" width="4" height="16"/>
               <rect x="14" y="4" width="4" height="16"/>
-            </svg>
-          ` : `
-            <svg class="audio-play-icon" viewBox="0 0 24 24">
+            ` : `
               <polygon points="5 3 19 12 5 21 5 3"/>
-            </svg>
-          `}
+            `}
+          </svg>
         </button>
 
         <div class="audio-waveform-container">
           <div class="audio-info-row">
             <span>${memory.audioTitle || 'Atmospheric Soundscape'}</span>
-            <span>${isPlaying ? (previewUrl ? 'Streaming 30s Preview' : 'Playing Ambient Synth') : memory.audioDuration}</span>
+            <span class="audio-status-label">${isPlaying ? (previewUrl ? 'Streaming 30s Preview' : 'Playing Ambient Synth') : (memory.audioDuration || '02:40')}</span>
           </div>
 
           <div class="audio-waveform-bars" aria-hidden="true">
@@ -729,7 +724,7 @@ export class UIEngine {
             <div style="position: relative;">
               <input type="search" id="itunes-music-search-input" class="form-input" 
                      placeholder="Search any artist or song (e.g. Bon Iver, Norah Jones, Ludovico Einaudi, Coldplay)..." 
-                     data-action="itunes-search-input" autocomplete="off" />
+                     autocomplete="off" />
             </div>
             <!-- Live Search Results Container -->
             <div id="itunes-search-results" class="itunes-results-grid" style="margin-top: 8px;"></div>
@@ -1006,8 +1001,10 @@ export class UIEngine {
     // If soundtrack has an iTunes previewUrl, play the 30s preview stream!
     if (wizardData.soundtrack?.previewUrl) {
       audioEngine.playStream(wizardData.soundtrack.previewUrl, newMemory.id);
+      store.setAudioState(newMemory.id, true);
     } else if (newMemory.soundtrackPresetId) {
       audioEngine.play(newMemory.soundtrackPresetId);
+      store.setAudioState(newMemory.id, true);
     }
 
     this.closeModal();
@@ -1183,8 +1180,6 @@ export class UIEngine {
           <div>Pure HTML5 · Modular CSS3 · Vanilla ES6+</div>
         </div>
       </footer>
-
-      <div id="modal-container"></div>
     `;
   }
 

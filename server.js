@@ -20,8 +20,14 @@ const PORT = process.env.PORT || 8080;
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
-// Serve static frontend assets from ./public
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static frontend assets from ./public with zero-cache headers for live development
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+}));
 
 /**
  * Smart Local Rule-based Fallback Generator

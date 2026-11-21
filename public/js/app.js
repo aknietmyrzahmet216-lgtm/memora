@@ -28,8 +28,11 @@ class App {
     // 3. Setup Global Event Delegation & Drag-Drop listeners
     this._setupEventDelegation();
 
-    // 3.1 Setup Audio Engine State Listener to sync preview buttons in-place
+    // 3.1 Setup Audio Engine State Listener to sync preview buttons & audio widgets in-place
     audioEngine.onStateChange = ({ isPlaying, currentPlayingId }) => {
+      // Sync store audio state without re-rendering the whole page
+      store.setAudioState(currentPlayingId, isPlaying);
+
       document.querySelectorAll('[data-action="preview-itunes-stream"]').forEach(btn => {
         const id = btn.getAttribute('data-song-id');
         if (id === currentPlayingId && isPlaying) {
@@ -50,6 +53,9 @@ class App {
           btn.innerHTML = '▶ Listen Preview';
         }
       });
+
+      // Sync Dieter Rams Audio Player Widget on memory view in-place (ZERO flicker, ZERO innerHTML replacement)
+      this._syncAudioWidgetState();
     };
 
     // 4. Subscribe to Store Updates
@@ -67,7 +73,8 @@ class App {
           ui.render();
         });
       } else if (eventName === 'AUDIO_TOGGLED') {
-        ui.render();
+        // In-place update: never call ui.render() here so there are zero flashes, glitches, or page shifts
+        this._syncAudioWidgetState();
       }
     });
 
@@ -228,12 +235,13 @@ class App {
           const previewUrl = actionEl.getAttribute('data-preview-url');
           
           if (trackId) {
-            store.toggleAudio(trackId);
+            let isNowPlaying = false;
             if (previewUrl && previewUrl !== 'undefined') {
-              audioEngine.toggleStream(previewUrl, trackId);
+              isNowPlaying = audioEngine.toggleStream(previewUrl, trackId);
             } else {
-              audioEngine.toggle(presetId);
+              isNowPlaying = audioEngine.toggle(presetId);
             }
+            store.setAudioState(trackId, isNowPlaying);
           }
           break;
         }
@@ -594,11 +602,58 @@ class App {
       }
     });
 
-    // Keyboard support: Escape closes modal
+    // Keyboard support: Escape closes modal, Enter triggers iTunes search without form submit
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         audioEngine.stop();
         ui.closeModal();
+      }
+      if (e.key === 'Enter' && e.target && e.target.id === 'itunes-music-search-input') {
+        e.preventDefault();
+        const query = e.target.value.trim();
+        if (query) {
+          clearTimeout(this.itunesDebounce);
+          this._handleItunesSearch(query);
+        }
+      }
+    });
+  }
+
+  _syncAudioWidgetState() {
+    const state = store.getState();
+    const isPlaying = state.isAudioPlaying;
+    const currentId = state.audioPlayingId;
+
+    document.querySelectorAll('.audio-player-widget').forEach(widget => {
+      const btn = widget.querySelector('[data-action="toggle-audio"]');
+      if (!btn) return;
+      const trackId = btn.getAttribute('data-id');
+      const isThisPlaying = isPlaying && (trackId === currentId);
+
+      widget.classList.toggle('is-playing', isThisPlaying);
+      btn.setAttribute('aria-label', isThisPlaying ? 'Pause soundtrack reflection' : 'Play soundtrack reflection');
+
+      const iconEl = btn.querySelector('.audio-play-icon');
+      if (iconEl) {
+        if (isThisPlaying) {
+          iconEl.innerHTML = `
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          `;
+        } else {
+          iconEl.innerHTML = `
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          `;
+        }
+      }
+
+      const statusEl = widget.querySelector('.audio-status-label');
+      if (statusEl) {
+        const previewUrl = btn.getAttribute('data-preview-url');
+        const duration = widget.getAttribute('data-duration') || '02:40';
+        statusEl.textContent = isThisPlaying
+          ? (previewUrl && previewUrl !== 'undefined' ? 'Streaming 30s Preview' : 'Playing Ambient Synth')
+          : duration;
       }
     });
   }
