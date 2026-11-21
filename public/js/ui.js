@@ -737,7 +737,7 @@ export class UIEngine {
 
           <!-- Currently Selected Soundtrack Banner (if selected) -->
           ${selectedTrack ? `
-            <div style="background-color: var(--color-paper-200); border: 1px solid var(--mood-accent); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between;">
+            <div id="selected-soundtrack-banner" style="background-color: var(--color-paper-200); border: 1px solid var(--mood-accent); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between;">
               <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                 ${selectedTrack.artwork ? `<img src="${selectedTrack.artwork}" style="width: 38px; height: 38px; border-radius: 4px; object-fit: cover;" alt="" />` : `
                   <div class="vinyl-disc" style="width: 32px; height: 32px;"></div>

@@ -28,6 +28,30 @@ class App {
     // 3. Setup Global Event Delegation & Drag-Drop listeners
     this._setupEventDelegation();
 
+    // 3.1 Setup Audio Engine State Listener to sync preview buttons in-place
+    audioEngine.onStateChange = ({ isPlaying, currentPlayingId }) => {
+      document.querySelectorAll('[data-action="preview-itunes-stream"]').forEach(btn => {
+        const id = btn.getAttribute('data-song-id');
+        if (id === currentPlayingId && isPlaying) {
+          btn.innerHTML = '■ Stop';
+          btn.classList.add('btn-primary');
+          btn.classList.remove('btn-secondary');
+        } else {
+          btn.innerHTML = '▶ 30s';
+          btn.classList.remove('btn-primary');
+          btn.classList.add('btn-secondary');
+        }
+      });
+      document.querySelectorAll('[data-action="preview-soundtrack"]').forEach(btn => {
+        const id = btn.getAttribute('data-id');
+        if (id === currentPlayingId && isPlaying) {
+          btn.innerHTML = '■ Stop';
+        } else {
+          btn.innerHTML = '▶ Listen Preview';
+        }
+      });
+    };
+
     // 4. Subscribe to Store Updates
     store.subscribe((state, eventName) => {
       if (eventName === 'SEARCH_CHANGED') {
@@ -236,7 +260,62 @@ class App {
               tag: 'iTunes Catalog'
             }
           });
-          ui.openWizardModal(3);
+
+          // Update song card selection states directly in DOM without re-rendering modal
+          document.querySelectorAll('.itunes-song-card').forEach(card => {
+            const cardId = card.getAttribute('data-song-id');
+            const tagEl = card.querySelector('.card-tag');
+            if (cardId === id) {
+              card.classList.add('selected');
+              if (tagEl) {
+                tagEl.textContent = 'Selected';
+                tagEl.style.background = 'var(--mood-accent)';
+                tagEl.style.color = '#fff';
+              }
+            } else {
+              card.classList.remove('selected');
+              if (tagEl) {
+                tagEl.textContent = 'Choose';
+                tagEl.style.background = 'var(--color-paper-200)';
+                tagEl.style.color = 'inherit';
+              }
+            }
+          });
+
+          // Clear selection on preset synth cards
+          document.querySelectorAll('.soundtrack-card').forEach(card => {
+            card.classList.remove('selected');
+          });
+
+          // Update or insert Selected Track banner
+          let banner = document.getElementById('selected-soundtrack-banner');
+          if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'selected-soundtrack-banner';
+            banner.style.cssText = 'background-color: var(--color-paper-200); border: 1px solid var(--mood-accent); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between;';
+            const resultsEl = document.getElementById('itunes-search-results');
+            if (resultsEl && resultsEl.parentNode) {
+              resultsEl.parentNode.insertBefore(banner, resultsEl);
+            }
+          }
+          if (banner) {
+            banner.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                ${artwork ? `<img src="${artwork}" style="width: 38px; height: 38px; border-radius: 4px; object-fit: cover;" alt="" />` : `
+                  <div class="vinyl-disc" style="width: 32px; height: 32px;"></div>
+                `}
+                <div style="overflow: hidden;">
+                  <div style="font-size: var(--text-sm); font-weight: 600; color: var(--color-ink-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    Selected: ${title}
+                  </div>
+                  <div style="font-size: var(--text-caption); color: var(--color-ink-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${artist}
+                  </div>
+                </div>
+              </div>
+              <span class="card-tag" style="background: var(--mood-accent); color: #fff;">✓ Active</span>
+            `;
+          }
           break;
         }
 
@@ -247,7 +326,6 @@ class App {
           const id = actionEl.getAttribute('data-song-id');
           if (url) {
             audioEngine.toggleStream(url, id);
-            ui.openWizardModal(3);
           }
           break;
         }
@@ -257,6 +335,7 @@ class App {
           e.preventDefault();
           const step = parseInt(actionEl.getAttribute('data-step') || '1', 10);
           ui.openWizardModal(step);
+          if (step === 3) this._restoreItunesSearchIfAny();
           break;
         }
 
@@ -270,7 +349,9 @@ class App {
         case 'wizard-prev': {
           e.preventDefault();
           const currentStep = parseInt(actionEl.getAttribute('data-step'), 10);
-          ui.openWizardModal(Math.max(1, currentStep - 1));
+          const targetStep = Math.max(1, currentStep - 1);
+          ui.openWizardModal(targetStep);
+          if (targetStep === 3) this._restoreItunesSearchIfAny();
           break;
         }
 
@@ -305,7 +386,21 @@ class App {
           const preset = SOUNDTRACK_PRESETS.find(p => p.id === presetId);
           if (preset) {
             store.updateWizardDraft({ soundtrack: preset });
-            ui.openWizardModal(3);
+            document.querySelectorAll('.soundtrack-card').forEach(card => {
+              const cardId = card.getAttribute('data-id');
+              card.classList.toggle('selected', cardId === presetId);
+            });
+            document.querySelectorAll('.itunes-song-card').forEach(card => {
+              card.classList.remove('selected');
+              const tagEl = card.querySelector('.card-tag');
+              if (tagEl) {
+                tagEl.textContent = 'Choose';
+                tagEl.style.background = 'var(--color-paper-200)';
+                tagEl.style.color = 'inherit';
+              }
+            });
+            const banner = document.getElementById('selected-soundtrack-banner');
+            if (banner) banner.remove();
           }
           break;
         }
@@ -316,7 +411,6 @@ class App {
           const presetId = actionEl.getAttribute('data-id');
           if (presetId) {
             audioEngine.toggle(presetId);
-            ui.openWizardModal(3);
           }
           break;
         }
@@ -536,6 +630,7 @@ class App {
         store.updateWizardDraft({ photos: [CURATED_ANALOG_PRESETS[0].url] });
       }
       ui.openWizardModal(3);
+      this._restoreItunesSearchIfAny();
     } else if (step === 3) {
       if (!draft.soundtrack) {
         store.updateWizardDraft({ soundtrack: SOUNDTRACK_PRESETS[0] });
@@ -619,41 +714,9 @@ class App {
         return;
       }
 
-      const currentSoundtrack = store.getState().wizardDraft.soundtrack;
-      resultsContainer.innerHTML = songs.map(song => {
-        const isSelected = currentSoundtrack?.id === song.id;
-        const isPlaying = audioEngine.isPlaying && audioEngine.currentPlayingId === song.id;
-
-        return `
-          <div class="itunes-song-card ${isSelected ? 'selected' : ''}" 
-               data-action="select-itunes-song" 
-               data-song-id="${song.id}" 
-               data-track-name="${song.title.replace(/"/g, '&quot;')}" 
-               data-artist-name="${song.artist.replace(/"/g, '&quot;')}" 
-               data-album-name="${(song.album || '').replace(/"/g, '&quot;')}" 
-               data-preview-url="${song.previewUrl || ''}" 
-               data-artwork="${song.artwork || ''}">
-            <div class="itunes-song-left">
-              <img class="itunes-artwork" src="${song.artwork || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=100&q=80'}" alt="" />
-              <div class="itunes-meta-info">
-                <div class="itunes-song-title">${song.title}</div>
-                <div class="itunes-song-artist">${song.artist} ${song.album ? `· ${song.album}` : ''}</div>
-              </div>
-            </div>
-            <div class="itunes-actions">
-              ${song.previewUrl ? `
-                <button type="button" class="btn btn-secondary" style="padding: 4px 10px; font-size: var(--text-caption);" 
-                        data-action="preview-itunes-stream" data-stream-url="${song.previewUrl}" data-song-id="${song.id}">
-                  ${isPlaying ? '■ Stop' : '▶ 30s'}
-                </button>
-              ` : ''}
-              <span class="card-tag" style="background: ${isSelected ? 'var(--mood-accent)' : 'var(--color-paper-200)'}; color: ${isSelected ? '#fff' : 'inherit'};">
-                ${isSelected ? 'Selected' : 'Choose'}
-              </span>
-            </div>
-          </div>
-        `;
-      }).join('');
+      this._lastItunesQuery = query;
+      this._lastItunesSongs = songs;
+      this._renderSongsToContainer(resultsContainer, songs);
     } catch (err) {
       console.warn('[MEMORA UI] iTunes search failed:', err);
       resultsContainer.innerHTML = `
@@ -661,6 +724,56 @@ class App {
           Could not search iTunes at this time. You can choose an ambient preset or manually type a song below.
         </div>
       `;
+    }
+  }
+
+  _renderSongsToContainer(resultsContainer, songs) {
+    if (!resultsContainer || !songs) return;
+    const currentSoundtrack = store.getState().wizardDraft.soundtrack;
+    resultsContainer.innerHTML = songs.map(song => {
+      const isSelected = currentSoundtrack?.id === song.id;
+      const isPlaying = audioEngine.isPlaying && audioEngine.currentPlayingId === song.id;
+
+      return `
+        <div class="itunes-song-card ${isSelected ? 'selected' : ''}" 
+             data-action="select-itunes-song" 
+             data-song-id="${song.id}" 
+             data-track-name="${song.title.replace(/"/g, '&quot;')}" 
+             data-artist-name="${song.artist.replace(/"/g, '&quot;')}" 
+             data-album-name="${(song.album || '').replace(/"/g, '&quot;')}" 
+             data-preview-url="${song.previewUrl || ''}" 
+             data-artwork="${song.artwork || ''}">
+          <div class="itunes-song-left">
+            <img class="itunes-artwork" src="${song.artwork || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=100&q=80'}" alt="" />
+            <div class="itunes-meta-info">
+              <div class="itunes-song-title">${song.title}</div>
+              <div class="itunes-song-artist">${song.artist} ${song.album ? `· ${song.album}` : ''}</div>
+            </div>
+          </div>
+          <div class="itunes-actions">
+            ${song.previewUrl ? `
+              <button type="button" class="btn ${isPlaying ? 'btn-primary' : 'btn-secondary'}" style="padding: 4px 10px; font-size: var(--text-caption);" 
+                      data-action="preview-itunes-stream" data-stream-url="${song.previewUrl}" data-song-id="${song.id}">
+                ${isPlaying ? '■ Stop' : '▶ 30s'}
+              </button>
+            ` : ''}
+            <span class="card-tag" style="background: ${isSelected ? 'var(--mood-accent)' : 'var(--color-paper-200)'}; color: ${isSelected ? '#fff' : 'inherit'};">
+              ${isSelected ? 'Selected' : 'Choose'}
+            </span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  _restoreItunesSearchIfAny() {
+    const searchInput = document.getElementById('itunes-music-search-input');
+    const resultsContainer = document.getElementById('itunes-search-results');
+    if (searchInput && this._lastItunesQuery) {
+      searchInput.value = this._lastItunesQuery;
+      if (resultsContainer && this._lastItunesSongs && this._lastItunesSongs.length > 0) {
+        this._renderSongsToContainer(resultsContainer, this._lastItunesSongs);
+      }
     }
   }
 }

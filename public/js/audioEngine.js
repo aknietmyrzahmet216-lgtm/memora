@@ -105,6 +105,8 @@ class AudioEngine {
       console.warn('[MEMORA Audio] Stream play prevented or failed:', e);
       this.stop();
     });
+
+    this._notifyState();
   }
 
   toggleStream(url, trackId) {
@@ -138,6 +140,20 @@ class AudioEngine {
     this.activeNodes = [];
     this.isPlaying = false;
     this.currentPlayingId = null;
+    this._notifyState();
+  }
+
+  _notifyState() {
+    if (typeof this.onStateChange === 'function') {
+      try {
+        this.onStateChange({
+          isPlaying: this.isPlaying,
+          currentPlayingId: this.currentPlayingId
+        });
+      } catch (err) {
+        // Ignored
+      }
+    }
   }
 
   toggle(presetId) {
