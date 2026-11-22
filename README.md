@@ -1,145 +1,180 @@
-# MEMORA — Emotional AI-Powered Digital Chronicle
+# MEMORA — Emotional AI-Powered Digital Chronicle & Sanctuary
 
-> An editorial analog-digital diary inspired by *Kinfolk* magazine, physical photo albums, and Dieter Rams functional minimalism. Built with pure semantic HTML5, modular CSS3, vanilla ES6+ JavaScript, and a lightweight Node.js Express backend powered by multimodal Gemini AI and real iTunes music streaming.
+> An editorial analog-digital diary inspired by *Kinfolk* magazine, tactile photo albums, and Dieter Rams' functional minimalism. Built with pure semantic HTML5, modular CSS3, vanilla ES6+ JavaScript, and a lightweight Node.js Express backend powered by Google's multimodal Gemini AI, Web Audio synthesizer pads, and real iTunes music streaming.
 
 ---
 
-## 1. Quick Start (3 Steps)
+## 🌸 Overview
 
-Run MEMORA locally in seconds:
+**MEMORA** is a sanctuary for memories designed as an antidote to ephemeral social media feeds and sterile note-taking apps. It captures fleeting daily moments, pairs them with photographs and real music, and synthesizes them into lasting emotional chronicles.
 
+Each memory is treated as a tangible archival artifact—complete with physical film contact sheets, custom color palettes, analog tape warmth, and time capsules sealed for future reflection.
+
+---
+
+## ✨ Key Features
+
+### 1. 🌿 Tactile Onboarding & Artisanal Figurine Companions
+- **Animated Floral Intro:** A cinematic, ethereal welcome introducing the philosophy of *"a garden of your memories"*.
+- **Tactile 3D Figurine Avatars:** Replace generic profile avatars with artisanal companions (Origami Crane, Ceramic Rabbit, Ethereal Blossom, Zen Teacup).
+- **Personalized Sanctuary Greeting:** Displays dynamic time-of-day greetings tailored to the user.
+
+### 2. 📖 4-Step Editorial Creation Wizard
+- **Step 1 (Story):** Borderless auto-expanding textarea with a live AI sentiment detector that subtly shifts ambiance as you write. Includes tactile error validation.
+- **Step 2 (Moments):** Drag-and-drop photo upload supporting up to 5 photographs. Automatic client-side canvas compression ensures memories remain compact and load instantly.
+- **Step 3 (Soundtrack):**
+  - **iTunes Music Catalog:** Search real songs with album artwork and stream 30-second audio previews directly in the browser.
+  - **Web Audio API Ambient Synthesizer:** 4 handcrafted analog synthesizer pads (Golden Afternoon, Stillness in Rain, Echoes of 1994, Morning Light).
+- **Step 4 (Review & Synthesis):** Theatrical multimodal AI synthesis screen tracking emotional undertones, color extraction, tempo matching, and memory composition.
+
+### 3. 🔮 Multimodal Gemini AI & Resilient Local Fallbacks
+- Powered by Google's official `@google/genai` SDK using `gemini-2.5-flash`.
+- Concurrently analyzes narrative text and image aesthetics to generate poetic titles, resonant 2–3 sentence summaries, 4-swatch harmonic color palettes, and structured folder taxonomies.
+- **Guaranteed Offline Reliability:** If `GEMINI_API_KEY` is not provided or network requests are interrupted, MEMORA automatically engages an intelligent local rule-based heuristic engine, ensuring zero crashes.
+
+### 4. ⏳ Time Capsules & "Then vs. Today" Reflections
+- Seal memories in digital time capsules with unlock horizons (1 Month, 6 Months, 1 Year).
+- **Simulated Time Travel:** Test the unsealing experience immediately to unlock a side-by-side comparison screen pairing the historical moment with modern reflections.
+
+### 5. 💎 Memora Blossom Plus Membership (₸ KZT Currency Simulation)
+- Designed with Kazakhstan's native currency (Kazakhstani Tenge — ₸ / KZT):
+  - **🌱 Free Sanctuary Tier:** ₸0 / month — 15 memories, standard ambient presets, up to 3 time capsules.
+  - **🌸 Memora Blossom Plus:** 
+    - **₸1,990** / month (ай)
+    - **₸18,900** / year (жыл) with a 21% annual savings discount.
+  - **Perks:** Unlimited memory storage, full iTunes music catalog, infinite time capsules, exclusive figurine companions, and golden profile aura.
+  - **Payment Simulation:** Interactive mock checkout supporting Kaspi Pay / QR and Bank Card (Visa/Mastercard) with celebratory activation.
+
+### 6. 🎨 Dynamic Mood Theme Engine
+The interface seamlessly morphs its mood and typography via semantic CSS data attributes:
+- **`happy-sunny` (Golden Hour Warmth):** Apricot `#E87A3E` radiance, sunlit canvas `#FFF7EB`, expressive editorial serifs.
+- **`calm-peaceful` (Sage Mist Silence):** Muted Sage `#4A7C6F`, misty wash `#F0F4F2`, serene clean typography.
+- **`nostalgic-emotional` (Vintage Sepia & Reverie):** Dusty Rose `#8C5A5A`, aged paper `#F3ECE8`, poetic italic serifs.
+
+### 7. 🖥️ Responsive Multi-Layout Sanctuary Architecture
+- **Desktop & Laptop Experience:** 2-column editorial dashboard with a floating frosted navigation pill bar, stats grid, and emotional flora distribution.
+- **Mobile Experience:** Compact glass cards with bottom tab navigation optimized for one-handed thumb interaction.
+- **Archive Views:** Seamlessly toggle between Bespoke Cards Grid, Manila Folders, and a Chronological Timeline.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend Core** | Pure Semantic HTML5, Vanilla JavaScript (ES6+ Modules, Zero Build Step, Zero Framework Bloat) |
+| **Styling & Effects** | Modern CSS3, CSS Custom Properties (Variables), Cascade Layers (`@layer`), Frosted Glassmorphism (`backdrop-filter`) |
+| **Audio Processing** | Web Audio API (Analog Polyphonic Synthesizer), HTML5 Audio Streaming |
+| **Image Compression** | HTML5 Canvas Client-Side Compression (< 80KB per photo) |
+| **Backend & APIs** | Node.js, Express 4, Apple iTunes Search Proxy |
+| **Artificial Intelligence** | Google Gemini API via `@google/genai` (`gemini-2.5-flash`) |
+| **Deployment & Hosting** | Vercel Serverless Functions (`api/index.js`, `vercel.json`) |
+
+---
+
+## 🚀 Quick Start Guide
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (version 18.x or later)
+- npm (version 9.x or later)
+
+### 1. Clone the repository
 ```bash
-# 1. Install dependencies
+git clone https://github.com/aknietmyrzahmet216-lgtm/memora.git
+cd memora
+```
+
+### 2. Install dependencies
+```bash
 npm install
+```
 
-# 2. Configure environment (Optional - intelligent fallback included!)
+### 3. Configure environment variables (Optional)
+```bash
 cp .env.example .env
-# Open .env and add your GEMINI_API_KEY if desired:
-# GEMINI_API_KEY=your_key_here
+```
+Open `.env` in any editor:
+```env
+PORT=8080
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+> **Note:** If `GEMINI_API_KEY` is omitted, MEMORA seamlessly runs on its intelligent local heuristic engine.
 
-# 3. Launch server
+### 4. Start the application
+```bash
 npm start
 ```
-
-Open **`http://localhost:8080`** in your browser.
-
-> [!NOTE]
-> If `GEMINI_API_KEY` is not provided or API calls fail, MEMORA automatically engages an intelligent local rule-based analysis engine so demos, creation flows, and color palettes work flawlessly offline without any crashes.
+Open [http://localhost:8080](http://localhost:8080) in your browser.
 
 ---
 
-## 2. Architectural Philosophy & Anti-AI Aesthetic
+## ☁️ Deployment on Vercel
 
-MEMORA rejects generic AI SaaS clichés—there are no neon gradients, purple glow cards, harsh `#000`/`#fff` contrasts, or bloated third-party frontend frameworks. Instead, it embodies a quiet, physical tactile presence:
+MEMORA is optimized for instantaneous deployment on **Vercel** as a zero-config serverless application:
 
-- **Base Color Palette:** Warm alabaster paper canvas (`#F7F5F0`), soft stone surfaces (`#EFECE6`), deep charcoal ink (`#1C1B19`), and muted taupe (`#6E6A63`) paired with hairlines (`rgba(28, 27, 25, 0.08)`).
-- **Typography:** Refined editorial serifs (*Playfair Display*) paired with crisp neo-grotesque sans (*Plus Jakarta Sans*) and monospace analog camera metadata stamps.
-- **Tactile Grain:** An inline SVG fractal noise overlay (`feTurbulence`) provides an authentic photographic paper grain.
+### Deploy via Vercel Dashboard (Recommended)
+1. Push your repository to **GitHub**.
+2. Go to [vercel.com](https://vercel.com) and click **"Add New Project"**.
+3. Import your `memora` GitHub repository.
+4. Leave Framework Preset as **Other** (Vercel automatically detects `api/index.js` and `vercel.json`).
+5. (Optional) In the **Environment Variables** section, add:
+   - `GEMINI_API_KEY`: Your Google Gemini API Key.
+6. Click **Deploy**. Your digital sanctuary will be live in seconds!
 
----
-
-## 3. Dynamic Mood Engine
-
-The application dynamically shifts themes via `data-mood="..."` on the document and cards:
-
-| Mood | Visual Atmosphere | Color Accents | Photo Filter & Typography |
-| :--- | :--- | :--- | :--- |
-| **`happy-sunny`** | Golden Hour Warmth | Apricot `#E87A3E` & Sunlit Canvas `#FFF7EB` | Warm contrast, amber radiance glow, expressive serif |
-| **`calm-peaceful`** | Sage Mist Silence | Muted Sage `#4A7C6F` & Mist `#F0F4F2` | Desaturated greens, generous whitespace, serene sans |
-| **`nostalgic-emotional`** | Vintage Sepia & Reverie | Dusty Rose `#8C5A5A` & Aged Paper `#F3ECE8` | Polaroid borders with subtle angular tilt, poetic italic serifs |
-
----
-
-## 4. Backend & API Services (`server.js`)
-
-MEMORA includes a lean, production-grade Express server:
-
-### A. Multimodal AI Analysis (`POST /api/analyze`)
-- Accepts `{ story, imageBase64, songTitle, songArtist }`.
-- Integrates Google's official `@google/genai` SDK using `gemini-2.5-flash` with strict JSON schema constraints.
-- Analyzes both image aesthetics and emotional text undertones to output:
-  - `title`: Poetic 2–4 word title.
-  - `aiStory`: Poetic 2–3 sentence memory narrative.
-  - `mood`: `"happy-sunny"` | `"calm-peaceful"` | `"nostalgic-emotional"`.
-  - `palette`: 4 complementary hex color swatches.
-  - `folderName`: Formatted archive title (`📁 Month Day — Title`).
-- **Resilient Fallback:** Automatically switches to heuristic color harmony and sentiment analysis if the API key is absent or network fails.
-
-### B. iTunes Music Search Proxy (`GET /api/music-search?term=...`)
-- Queries Apple's public iTunes Search API (`https://itunes.apple.com/search?term=...&entity=song&limit=4`).
-- Returns real track titles, artists, high-res album covers, and 30-second audio stream URLs (`previewUrl`).
-- Proxied through Express to avoid browser adblocker interference and CORS issues.
+### Configuration Details (`vercel.json`)
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.js" }
+  ]
+}
+```
 
 ---
 
-## 5. Core Features & User Flows
-
-### A. 3 Pre-Loaded Demo Scenarios (`public/js/mockData.js`)
-1. **Day 1 — "Golden Hours"** (`happy-sunny`):
-   - Folder: `📁 November 20 — Golden Hours`
-   - Story: Walking with friends at sunset along the ridge, spontaneous laughter, warm amber light.
-   - Soundtrack: *Golden Afternoon* (The Paper Kites & Ambient Acoustic).
-2. **Day 2 — "Quiet Morning Rain"** (`calm-peaceful`):
-   - Folder: `📁 November 19 — Quiet Morning Rain`
-   - Story: Slow pour-over coffee by the window, reading poems as rain taps the glass.
-   - Soundtrack: *Stillness in Rain* (Brian Eno & Ambient Mist).
-3. **Day 3 — "Faded Postcards"** (`nostalgic-emotional`):
-   - Folder: `📁 November 18 — Faded Postcards`
-   - Story: Finding vintage photos and postcards in a cedar box, late-night vinyl crackle.
-   - Pre-sealed in Time Capsule with demo simulation enabled.
-
-### B. 4-Step Editorial Wizard (`public/js/ui.js`)
-- **Step 1 (Story):** Borderless expanding textarea (`field-sizing: content`) with a live AI sentiment detector that analyzes emotional undertones in real-time as you write. Includes inline validation shake feedback.
-- **Step 2 (Moments):** Drag-and-drop & native file picker supporting 1 to 5 photos. Uses HTML5 Canvas compression (`public/js/imageCompressor.js`) to scale images under 80KB so `localStorage` never overflows, displayed as tactile contact-sheet filmstrips with removable pins.
-- **Step 3 (Soundtrack):** Search real music through the **iTunes Search API** with album covers and live 30-second audio stream previews, or pick from 4 curated ambient synthesizer presets powered by the browser's native **Web Audio API** (`public/js/audioEngine.js`).
-- **Step 4 (Review & Create):** Summary card leading into the theatrical synthesis flow.
-
-### C. Theatrical Multi-Modal AI Processing Screen
-Hypnotic transition screen tracking 4 animated synthesis stages in parallel with server processing:
-1. *Reading emotional undertones in your story...*
-2. *Extracting color harmony & lighting from your photos...*
-3. *Matching tempo and mood with your soundtrack...*
-4. *Composing your memory atmosphere...*
-
-Outputs a tailored mood theme, poetic title, 2–3 sentence AI narrative, extracted 4-color visual palette chips, and structured folder name `📁 [Month Day] — [Title]`.
-
-### D. Time Capsule & "Then vs. Today" Comparison
-- Seal memories with unlock durations (`In 1 Month`, `In 6 Months`, `In 1 Year`).
-- **Interactive Time Travel Demo:** Unlocks a Side-by-Side Comparison View comparing the original entry with a present-day reflection prompt and form.
-
-### E. Memory Archive & Multi-Layout System
-- **View Switcher:**
-  - **Cards Grid:** Bespoke editorial cards with Polaroid tilts and audio widgets.
-  - **Folder Grid:** Physical manila archive folders with tabs, color bars, and photo peeks.
-  - **Chronological Timeline:** Vertical editorial spine tracking time milestones.
-- **Instant Client-Side Filtering:** Keyword search, mood pills, and date sorting (`Newest First` / `Oldest First`).
-- **Demo Data Reset:** A subtle button in the footer to restore pristine demo data at any time.
-
----
-
-## 6. Project Structure
+## 📁 Project Structure
 
 ```
-/memora/
-├── server.js                    # Express server (static hosting, Gemini AI & iTunes proxy)
-├── package.json                 # Node dependencies & npm start script
-├── .env.example                 # Environment template (GEMINI_API_KEY, PORT)
-├── .gitignore                   # Ignore node_modules, .env, .DS_Store
-├── README.md                    # System documentation and setup guide
-└── public/
-    ├── index.html               # Semantic markup, preconnect Google Fonts, ES6 module mount
-    ├── css/
-    │   ├── variables.css        # Cascade layers (@layer), design tokens, fluid typography, & mood tokens
-    │   ├── base.css             # Layered resets, typography, custom scrollbars, and SVG film grain
-    │   ├── components.css       # Header, Hero spread, audio player, folder grid, stepper, & modals
-    │   └── animations.css       # View Transitions, vinyl rotation, aperture pulse, and reduced motion
-    └── js/
-        ├── mockData.js          # 3 rich demo chronicles & time capsule seed data
-        ├── store.js             # Centralized state management (pub/sub, localStorage persistence)
-        ├── themes.js            # Dynamic mood engine managing data-mood & theme swatches
-        ├── audioEngine.js       # Web Audio API ambient synth & HTML5 streaming audio engine
-        ├── aiEngine.js          # Client-side heuristic fallback & synthesis helpers
-        ├── imageCompressor.js   # Client-side HTML5 canvas image compressor (under 80KB)
-        ├── ui.js                # DOM rendering, 4-step wizard, memory view, & timeline layouts
-        └── app.js               # Application entry point, search debouncing, & event delegation
+memora/
+├── api/
+│   └── index.js                 # Vercel serverless entrypoint exporting Express app
+├── public/
+│   ├── index.html               # Semantic HTML5 shell, preconnect fonts, meta tags
+│   ├── assets/
+│   │   ├── avatars/             # Artisanal SVG figurine models (Blossom, Crane, Teacup, Rabbit)
+│   │   └── holographic_flower.svg
+│   ├── css/
+│   │   ├── variables.css        # Cascade layers, mood color tokens, fluid typography
+│   │   ├── base.css             # Resets, typography, custom scrollbars, SVG film grain
+│   │   ├── components.css       # Cards, modals, audio widget, membership, nav pills
+│   │   └── animations.css       # Page transitions, vinyl spin, aperture pulse
+│   └── js/
+│       ├── app.js               # Application orchestration, search debounce, event delegation
+│       ├── ui.js                # DOM rendering, 4-step wizard, subscription modal, profile
+│       ├── store.js             # Reactive Pub/Sub state store with LocalStorage persistence
+│       ├── themes.js            # Mood engine & dynamic color swatches
+│       ├── audioEngine.js       # Web Audio API ambient synthesizer & iTunes preview engine
+│       ├── aiEngine.js          # Heuristic sentiment fallback & synthesis helpers
+│       ├── imageCompressor.js   # Client-side HTML5 canvas photo compressor
+│       └── mockData.js          # Preloaded memories & time capsule seed data
+├── server.js                    # Express application (multimodal AI route & iTunes proxy)
+├── package.json                 # Project dependencies & scripts
+├── vercel.json                  # Modern Vercel rewrites configuration
+├── .env.example                 # Environment variables blueprint
+└── README.md                    # Project documentation
 ```
+
+---
+
+## ⌨️ Keyboard Shortcuts & Gestures
+
+- `Escape`: Closes any open modal (Creation Wizard, Memory Detail, Subscription).
+- `Enter` (in Profile name input): Instantly saves user name.
+- Click outside modal backdrop: Gracefully dismisses view.
+- Drag & Drop: Drag photos directly onto Step 2 of the creation wizard.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).

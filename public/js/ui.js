@@ -166,6 +166,7 @@ export class UIEngine {
           <div class="desktop-user-pill" data-action="nav-tab" data-tab="profile" title="View Profile & Stats">
             <img class="desktop-user-avatar" src="${avatar}" alt="${name}" />
             <span class="desktop-user-name">${name}</span>
+            ${userProfile?.subscription?.active ? `<span class="pro-sparkle-badge" title="Active Memora Blossom Plus">💎 PLUS</span>` : ''}
           </div>
         </div>
       </header>
@@ -293,7 +294,7 @@ export class UIEngine {
         <div class="glass-greeting-pill mobile-only-greeting">
           <div class="greeting-left">
             <span class="greeting-salutation">${salutation},</span>
-            <span class="greeting-name">${userProfile.name} ♡</span>
+            <span class="greeting-name">${userProfile.name} ${userProfile.subscription?.active ? '💎' : '♡'}</span>
           </div>
           <img class="greeting-avatar" src="${userProfile.avatarUrl}" alt="${userProfile.name}" data-action="nav-tab" data-tab="profile" title="View Profile & Stats" />
         </div>
@@ -546,12 +547,12 @@ export class UIEngine {
 
         <!-- 2-Column Dashboard on Desktop -->
         <div class="profile-desktop-grid">
-          <!-- Left Column: User Profile Card & Quick Actions -->
+          <!-- Left Column: User Profile Card, Subscription & Quick Actions -->
           <div style="display: flex; flex-direction: column;">
             <div class="profile-card-glass">
               <img class="profile-avatar-large" src="${profile.avatarUrl}" alt="${profile.name}" />
               <h2 class="profile-user-name">${profile.name}</h2>
-              <span class="profile-badge">🌸 Master Gardener</span>
+              ${profile.subscription?.active ? '<span class="profile-badge-pro">💎 Blossom Plus Member</span>' : '<span class="profile-badge">🌸 Master Gardener</span>'}
               <div style="font-size: 12px; color: #7A6662; margin-bottom: 16px;">Member since ${profile.joinedDate || 'November 2026'}</div>
 
               <!-- Edit Name Input -->
@@ -560,6 +561,57 @@ export class UIEngine {
                        value="${profile.name}" style="max-width: 170px; padding: 7px 14px; font-size: 13.5px;" placeholder="Your name..." />
                 <button class="badge-chip" data-action="save-profile-name" style="padding: 7px 16px; font-size: 12px; background: #3D2E2B; color: #FFF;">Save</button>
               </div>
+            </div>
+
+            <!-- Sanctuary Subscription Card (₸ KZT Simulation) -->
+            <div class="subscription-card-glass">
+              <div class="subscription-card-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 18px;">💎</span>
+                  <span style="font-weight: 600; font-size: 14.5px; color: #3D2E2B;">Memora Sanctuary Plan</span>
+                </div>
+                ${profile.subscription?.active ? `
+                  <span class="badge-active-sub">Active</span>
+                ` : `
+                  <span class="badge-free-sub">Free Tier</span>
+                `}
+              </div>
+
+              ${profile.subscription?.active ? `
+                <div class="subscription-plan-desc">
+                  <strong>${profile.subscription.name}</strong> (${profile.subscription.price})
+                  <div style="font-size: 11.5px; color: #7A6662; margin-top: 3px;">
+                    Действует до: ${profile.subscription.expiresAt || 'ноябрь 2027'}
+                  </div>
+                </div>
+                <div class="sub-perks-list">
+                  <div class="sub-perk-item">✓ Шексіз естеліктер (Безлимитный архив)</div>
+                  <div class="sub-perk-item">✓ iTunes потоковое аудио без ограничений</div>
+                  <div class="sub-perk-item">✓ Мультимодальный анализ Gemini AI</div>
+                  <div class="sub-perk-item">✓ Все фигурки и капсулы времени</div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 14px;">
+                  <button class="badge-chip" data-action="open-subscription-modal" style="flex: 1; justify-content: center; font-size: 12px; padding: 8px 12px;">Сменить тариф</button>
+                  <button class="badge-chip" data-action="cancel-subscription" style="color: #8C5A5A; font-size: 12px; padding: 8px 12px;" title="Отменить подписку">Отмена</button>
+                </div>
+              ` : `
+                <div class="subscription-plan-desc">
+                  Откройте безграничное святилище для ваших воспоминаний, музыки и капсул времени.
+                </div>
+                <div class="sub-pricing-preview">
+                  <span class="sub-price-val">₸1,990</span>
+                  <span class="sub-price-period">/ ай (месяц)</span>
+                </div>
+                <div class="sub-perks-list">
+                  <div class="sub-perk-item">✓ Безлимитные фото-альбомы и истории</div>
+                  <div class="sub-perk-item">✓ Поиск любой музыки в iTunes с превью</div>
+                  <div class="sub-perk-item">✓ Бесконечные капсулы времени</div>
+                </div>
+                <button class="subscription-upgrade-btn" data-action="open-subscription-modal">
+                  <span>✨</span>
+                  <span>Оформить подписку за ₸1,990</span>
+                </button>
+              `}
             </div>
 
             <!-- Quick Actions Column -->
@@ -1913,6 +1965,137 @@ export class UIEngine {
     `;
 
     document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Subscription Modal & Celebration Screen (₸ KZT Simulation)
+   */
+  openSubscriptionModal(cycle = 'monthly') {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
+
+    const isAnnual = cycle === 'annual';
+    const monthlyPrice = '₸1,990';
+    const annualPrice = '₸18,900';
+    const annualMonthlyEquiv = '₸1,575';
+
+    modalContainer.innerHTML = `
+      <div class="modal-backdrop is-open animate-fade-in" role="dialog" aria-modal="true" style="backdrop-filter: blur(20px); background: rgba(61, 46, 43, 0.45);">
+        <div class="subscription-modal animate-slide-up">
+          <button class="modal-close-btn" data-action="close-modal" aria-label="Close modal">&times;</button>
+
+          <!-- Modal Header -->
+          <div class="sub-modal-header">
+            <div class="sub-modal-icon-badge">🌸</div>
+            <h2 class="sub-modal-title">Memora Blossom Plus</h2>
+            <p class="sub-modal-sub">Святилище без ограничений для ваших сокровенных моментов, музыки и капсул времени.</p>
+          </div>
+
+          <!-- Billing Cycle Switcher -->
+          <div class="sub-cycle-switcher">
+            <button class="sub-cycle-btn ${!isAnnual ? 'active' : ''}" data-action="switch-sub-cycle" data-cycle="monthly">
+              <span>Ежемесячно</span>
+              <span class="sub-cycle-tag">${monthlyPrice} / ай</span>
+            </button>
+            <button class="sub-cycle-btn ${isAnnual ? 'active' : ''}" data-action="switch-sub-cycle" data-cycle="annual">
+              <span style="display: flex; align-items: center; gap: 4px;">На 1 год <span class="badge-save-pill">-21%</span></span>
+              <span class="sub-cycle-tag">${annualPrice} / жыл (${annualMonthlyEquiv}/ай)</span>
+            </button>
+          </div>
+
+          <!-- Feature List -->
+          <div class="sub-features-grid">
+            <div class="sub-feature-row">
+              <span class="sub-feature-icon">✨</span>
+              <div class="sub-feature-info">
+                <div class="sub-feature-name">Шексіз естеліктер (Безлимитный архив)</div>
+                <div class="sub-feature-desc">Неограниченное количество историй, альбомов и фотокарточек.</div>
+              </div>
+            </div>
+            <div class="sub-feature-row">
+              <span class="sub-feature-icon">🎵</span>
+              <div class="sub-feature-info">
+                <div class="sub-feature-name">iTunes Audio Streaming</div>
+                <div class="sub-feature-desc">Поиск любых реальных треков по всему каталогу Apple Music.</div>
+              </div>
+            </div>
+            <div class="sub-feature-row">
+              <span class="sub-feature-icon">⏳</span>
+              <div class="sub-feature-info">
+                <div class="sub-feature-name">Капсулы времени без лимита</div>
+                <div class="sub-feature-desc">Запечатывайте воспоминания на 1 месяц, 6 месяцев или 1 год.</div>
+              </div>
+            </div>
+            <div class="sub-feature-row">
+              <span class="sub-feature-icon">💎</span>
+              <div class="sub-feature-info">
+                <div class="sub-feature-name">VIP фигурки и золотая аура</div>
+                <div class="sub-feature-desc">Эксклюзивные 3D компаньоны и знак Blossom Plus в профиле.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation Payment Methods Box -->
+          <div class="sub-pay-methods-box">
+            <div class="sub-pay-methods-label">Выберите способ оплаты (Имитация в тенге ₸):</div>
+            <div class="sub-pay-options-row">
+              <label class="sub-pay-radio-card active">
+                <input type="radio" name="pay-method" value="kaspi" checked />
+                <span class="sub-pay-logo-badge" style="background: #F14635; color: #fff;">Kaspi</span>
+                <span class="sub-pay-radio-name">Kaspi Pay / QR</span>
+              </label>
+              <label class="sub-pay-radio-card">
+                <input type="radio" name="pay-method" value="card" />
+                <span class="sub-pay-logo-badge" style="background: #3D2E2B; color: #fff;">💳</span>
+                <span class="sub-pay-radio-name">Карта (Visa/MC)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Subscribe CTA Button -->
+          <button class="sub-cta-pay-btn" data-action="simulate-subscribe" data-cycle="${cycle}">
+            <span>Оплатить ${isAnnual ? annualPrice : monthlyPrice}</span>
+            <span>→</span>
+          </button>
+          
+          <div class="sub-guarantee-note">
+            🔒 Безопасная имитация оплаты · Отмена в любой момент в 1 клик
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.style.overflow = 'hidden';
+  }
+
+  renderSubscriptionSuccess(cycle = 'monthly') {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
+
+    const isAnnual = cycle === 'annual';
+    const priceText = isAnnual ? '₸18,900 / жыл' : '₸1,990 / ай';
+
+    modalContainer.innerHTML = `
+      <div class="modal-backdrop is-open animate-fade-in" role="dialog" aria-modal="true" style="backdrop-filter: blur(20px); background: rgba(61, 46, 43, 0.45);">
+        <div class="subscription-modal animate-slide-up" style="text-align: center; padding: 36px 28px;">
+          <div style="font-size: 54px; margin-bottom: 12px;">🎉</div>
+          <h2 style="font-family: 'Playfair Display', Georgia, serif; font-size: 24px; color: #3D2E2B; margin-bottom: 8px;">
+            Құттықтаймыз!
+          </h2>
+          <div style="font-size: 15px; font-weight: 600; color: #B87866; margin-bottom: 16px;">
+            Подписка Memora Blossom Plus активирована
+          </div>
+          <p style="font-size: 13.5px; color: #7A6662; line-height: 1.6; max-width: 380px; margin: 0 auto 24px;">
+            Ваш сад теперь не имеет границ. Вам открыт неограниченный доступ ко всем фотоальбомам, музыке iTunes и капсулам времени (${priceText}).
+          </p>
+
+          <button class="badge-chip" data-action="close-modal" style="width: 100%; justify-content: center; background: #3D2E2B; color: #FFF; padding: 14px 20px; font-size: 14px; border-radius: 9999px;">
+            <span>🌸</span>
+            <span>Перейти в Сад Воспоминаний</span>
+          </button>
+        </div>
+      </div>
+    `;
   }
 
   closeModal() {

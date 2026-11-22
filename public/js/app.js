@@ -118,6 +118,15 @@ class App {
         return;
       }
 
+      // Subscription payment method card selection
+      const payCard = e.target.closest('.sub-pay-radio-card');
+      if (payCard) {
+        document.querySelectorAll('.sub-pay-radio-card').forEach(c => c.classList.remove('active'));
+        payCard.classList.add('active');
+        const radio = payCard.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+      }
+
       const actionEl = e.target.closest('[data-action]');
       if (!actionEl) return;
 
@@ -182,6 +191,41 @@ class App {
           if (input) {
             const name = input.value.trim();
             store.setUserName(name || 'Alika');
+          }
+          break;
+        }
+
+        // Subscription Actions (₸ KZT Simulation)
+        case 'open-subscription-modal': {
+          e.preventDefault();
+          const cycle = actionEl.getAttribute('data-cycle') || 'monthly';
+          ui.openSubscriptionModal(cycle);
+          break;
+        }
+
+        case 'switch-sub-cycle': {
+          e.preventDefault();
+          const cycle = actionEl.getAttribute('data-cycle') || 'monthly';
+          ui.openSubscriptionModal(cycle);
+          break;
+        }
+
+        case 'simulate-subscribe': {
+          e.preventDefault();
+          const cycle = actionEl.getAttribute('data-cycle') || 'monthly';
+          actionEl.disabled = true;
+          actionEl.innerHTML = '<span>🌸 Активация святилища...</span>';
+          setTimeout(() => {
+            store.subscribeToPlan('blossom_plus', cycle);
+            ui.renderSubscriptionSuccess(cycle);
+          }, 450);
+          break;
+        }
+
+        case 'cancel-subscription': {
+          e.preventDefault();
+          if (confirm('Вы уверены, что хотите отменить подписку Memora Blossom Plus?')) {
+            store.cancelSubscription();
           }
           break;
         }

@@ -91,7 +91,16 @@ class MemoryStore {
             name: parsed.userProfile?.name || 'Alika',
             avatarUrl: avatarUrl,
             hasCompletedIntro: parsed.userProfile?.hasCompletedIntro || false,
-            joinedDate: parsed.userProfile?.joinedDate || 'November 2026'
+            joinedDate: parsed.userProfile?.joinedDate || 'November 2026',
+            subscription: parsed.userProfile?.subscription || {
+              plan: 'free',
+              name: 'Free Sanctuary',
+              price: '₸0',
+              cycle: 'monthly',
+              active: false,
+              startedAt: null,
+              expiresAt: null
+            }
           },
           activeTab: parsed.activeTab || 'home',
           audioPlayingId: null,
@@ -124,7 +133,16 @@ class MemoryStore {
         name: 'Alika',
         avatarUrl: 'assets/avatars/avatar_blossom.svg',
         hasCompletedIntro: false,
-        joinedDate: 'November 2026'
+        joinedDate: 'November 2026',
+        subscription: {
+          plan: 'free',
+          name: 'Free Sanctuary',
+          price: '₸0',
+          cycle: 'monthly',
+          active: false,
+          startedAt: null,
+          expiresAt: null
+        }
       },
       activeTab: 'home',
       audioPlayingId: null,
@@ -312,6 +330,58 @@ class MemoryStore {
     }, 'INTRO_REOPENED');
   }
 
+  subscribeToPlan(planId = 'blossom_plus', cycle = 'monthly') {
+    const isAnnual = cycle === 'annual';
+    const price = isAnnual ? '₸18,900 / жыл' : '₸1,990 / ай';
+    const now = new Date();
+    const expires = new Date();
+    if (isAnnual) {
+      expires.setFullYear(expires.getFullYear() + 1);
+    } else {
+      expires.setMonth(expires.getMonth() + 1);
+    }
+
+    const subscription = {
+      plan: planId,
+      name: 'Memora Blossom Plus',
+      price: price,
+      cycle: cycle,
+      active: true,
+      startedAt: now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }),
+      expiresAt: expires.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+    };
+
+    this.setState({
+      userProfile: {
+        ...this._state.userProfile,
+        subscription
+      }
+    }, 'PROFILE_UPDATED');
+
+    return subscription;
+  }
+
+  cancelSubscription() {
+    const subscription = {
+      plan: 'free',
+      name: 'Free Sanctuary',
+      price: '₸0',
+      cycle: 'monthly',
+      active: false,
+      startedAt: null,
+      expiresAt: null
+    };
+
+    this.setState({
+      userProfile: {
+        ...this._state.userProfile,
+        subscription
+      }
+    }, 'PROFILE_UPDATED');
+
+    return subscription;
+  }
+
   setActiveTab(tab) {
     this.setState({
       activeTab: tab,
@@ -379,7 +449,16 @@ class MemoryStore {
         name: 'Alika',
         avatarUrl: 'assets/avatars/avatar_blossom.svg',
         hasCompletedIntro: false,
-        joinedDate: 'November 2026'
+        joinedDate: 'November 2026',
+        subscription: {
+          plan: 'free',
+          name: 'Free Sanctuary',
+          price: '₸0',
+          cycle: 'monthly',
+          active: false,
+          startedAt: null,
+          expiresAt: null
+        }
       },
       activeTab: 'home',
       audioPlayingId: null,
